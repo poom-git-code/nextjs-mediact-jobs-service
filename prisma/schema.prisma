@@ -1,0 +1,3426 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+  binaryTargets   = ["native"]
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model activity_logs {
+  id         Int       @id @default(autoincrement())
+  user_id    Int?
+  action     String    @db.VarChar(255)
+  module     String    @db.VarChar(100)
+  ip_address String?   @db.VarChar(50)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model ad_clicks {
+  id             Int       @id @default(autoincrement())
+  ad_id          Int
+  ad_media_id    Int?
+  timestamp      DateTime? @default(now()) @db.Timestamp(0)
+  viewer_ip      String?   @db.VarChar(45)
+  viewer_user_id Int?
+  created_by     Int?
+  updated_by     Int?
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@index([ad_media_id], map: "fk_ad_media")
+}
+
+model ad_impressions {
+  id             Int       @id @default(autoincrement())
+  ad_id          Int
+  ad_media_id    Int?
+  timestamp      DateTime? @default(now()) @db.Timestamp(0)
+  viewer_ip      String?   @db.VarChar(45)
+  viewer_user_id Int?
+  created_by     Int?
+  updated_by     Int?
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@index([ad_media_id], map: "fk_ad_media")
+}
+
+model ad_media {
+  id            Int       @id @default(autoincrement())
+  ad_id         Int
+  media_url     String    @db.VarChar(500)
+  media_type    String    @db.VarChar(50)
+  media_size    Int?
+  thumbnail_url String?   @db.VarChar(500)
+  is_active     Boolean?  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  media_name    String    @db.VarChar(50)
+}
+
+model ad_partners {
+  id                   Int      @id @default(autoincrement())
+  partner_type_id      Int?
+  status_id            Int?
+  partner_name         String   @db.VarChar(50)
+  contact_name         String   @db.VarChar(50)
+  email                String?  @db.VarChar(100)
+  contact_email        String?  @db.VarChar(100)
+  country_code         String?  @db.VarChar(10)
+  phone_number         String?  @db.VarChar(20)
+  contact_phone_number String?  @db.VarChar(20)
+  profile_picture      String?  @db.VarChar(1024)
+  tax_id               String?  @db.VarChar(50)
+  created_by           Int?
+  updated_by           Int?
+  created_at           DateTime @default(now()) @db.DateTime(0)
+  updated_at           DateTime @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model ad_target_groups {
+  id           Int       @id @default(autoincrement())
+  ad_id        Int
+  target_group String    @db.VarChar(255)
+  created_by   Int?
+  updated_by   Int?
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model ad_targets {
+  id           Int      @id @default(autoincrement())
+  ad_id        Int
+  target_type  String   @db.VarChar(50)
+  target_value String   @db.VarChar(255)
+  is_active    Boolean? @default(true)
+  created_by   Int?
+  updated_by   Int?
+  created_at   DateTime @default(now()) @db.DateTime(0)
+  updated_at   DateTime @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model ad_type {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
+  description String?  @db.Text
+  is_active   Boolean? @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model ad_types {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(50)
+  description String?   @db.Text
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model address_types {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(50)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model addresses {
+  id               Int      @id @default(autoincrement())
+  reference_id     Int
+  address_type     Int?
+  address_line1    String   @db.VarChar(255)
+  address_line2    String?  @db.VarChar(255)
+  country_code     String?  @db.VarChar(50)
+  province_code    Int?
+  district_code    Int?
+  subdistrict_code Int?
+  is_active        Boolean? @default(true)
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  updated_at       DateTime @default(now()) @updatedAt @db.DateTime(0)
+  created_by       Int?
+  updated_by       Int?
+  province         String?  @db.VarChar(255)
+  district         String?  @db.VarChar(100)
+  sub_district     String?  @db.VarChar(100)
+  postal_code      String   @db.VarChar(5)
+  country          String?  @db.VarChar(100)
+}
+
+model ads {
+  id                  Int       @id @default(autoincrement())
+  partner_id          Int
+  ad_type_id          Int
+  url                 String?   @db.VarChar(255)
+  start_date          DateTime? @db.Date
+  end_date            DateTime? @db.Date
+  title               String    @db.VarChar(255)
+  content             String?   @db.Text
+  status              String?   @default("active") @db.VarChar(50)
+  budget              Decimal   @default(0.0000) @db.Decimal(10, 4)
+  used_budgets        Decimal   @default(0.0000) @db.Decimal(10, 4)
+  cost_per_click      Decimal   @default(0.0000) @db.Decimal(10, 4)
+  cost_per_impression Decimal   @default(0.0000) @db.Decimal(10, 4)
+  created_by          Int?
+  updated_by          Int?
+  created_at          DateTime  @default(now()) @db.DateTime(0)
+  updated_at          DateTime  @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model ads_translations {
+  id            Int       @id @default(autoincrement())
+  ad_id         Int
+  language_code String    @db.VarChar(10)
+  title         String    @db.VarChar(255)
+  description   String?   @db.Text
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@unique([ad_id, language_code], map: "ad_id")
+}
+
+model announcements {
+  id           Int                   @id @default(autoincrement())
+  title        String                @db.VarChar(255)
+  message      String                @db.Text
+  target_group String?               @db.Text
+  priority     AnnouncementPriority? @default(normal)
+  created_by   Int?
+  updated_by   Int?
+  created_at   DateTime?             @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?             @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model applicant_reviews {
+  id           Int         @id @default(autoincrement())
+  job_apply_id Int         @unique(map: "uk_job_apply_id")
+  reviewer_id  Int?
+  rating       Int         @db.TinyInt
+  comment      String?     @db.VarChar(2000)
+  is_active    Boolean     @default(true)
+  created_at   DateTime    @default(now()) @db.DateTime(0)
+  job_apply    job_applies @relation(fields: [job_apply_id], references: [id], onDelete: Cascade, map: "fk_review_to_application")
+  reviewer     users?      @relation("ReviewerRelation", fields: [reviewer_id], references: [id], map: "fk_review_to_reviewer")
+
+  @@index([is_active], map: "idx_is_active")
+  @@index([reviewer_id], map: "idx_reviewer_id")
+}
+
+model approvers {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  username     String    @db.VarChar(50)
+  email        String?   @db.VarChar(100)
+  first_name   String    @db.VarChar(60)
+  last_name    String    @db.VarChar(60)
+  phone_number String?   @db.VarChar(20)
+  is_active    Boolean   @default(true)
+  created_by   Int?
+  updated_by   Int?
+  created_at   DateTime? @db.DateTime(0)
+  updated_at   DateTime? @db.DateTime(0)
+}
+
+model audit_settings {
+  id                 Int       @id @default(autoincrement())
+  table_name         String    @unique(map: "table_name") @db.VarChar(100)
+  auto_audit_enabled Boolean?  @default(true)
+  track_select       Boolean?  @default(false)
+  track_insert       Boolean?  @default(true)
+  track_update       Boolean?  @default(true)
+  track_delete       Boolean?  @default(true)
+  exclude_columns    Json?
+  created_at         DateTime? @default(now()) @db.Timestamp(0)
+  updated_at         DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@index([auto_audit_enabled], map: "idx_auto_audit_enabled")
+  @@index([table_name], map: "idx_table_name")
+}
+
+model auspicious_colors {
+  id         Int                 @id @default(autoincrement())
+  group_id   Int
+  color_name String?             @db.VarChar(50)
+  colors     String              @db.Char(7)
+  type       AuspiciousColorType
+  created_at DateTime?           @default(now()) @db.Timestamp(0)
+  created_by Int?
+  updated_at DateTime?           @default(now()) @updatedAt @db.Timestamp(0)
+  updated_by Int?
+  creator    users?              @relation("AuspiciousColorCreator", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auspicious_colors_ibfk_1")
+  updater    users?              @relation("AuspiciousColorUpdater", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auspicious_colors_ibfk_2")
+
+  @@index([created_by], map: "created_by")
+  @@index([updated_by], map: "updated_by")
+}
+
+model bonus_days {
+  id           Int       @id @default(autoincrement())
+  bonus_date   DateTime? @unique(map: "bonus_date") @db.Date
+  weekday      Weekday?
+  bonus_points Int
+  description  String?   @db.VarChar(255)
+  is_recurring Boolean?  @default(false)
+}
+
+model booth_events {
+  id                    BigInt         @id @default(autoincrement())
+  name                  String         @db.VarChar(255)
+  type                  BoothEventType @default(onsite)
+  start_date            DateTime       @db.DateTime(0)
+  end_date              DateTime       @db.DateTime(0)
+  total_stamps_required Int            @default(5)
+  is_active             Boolean        @default(true)
+  created_at            DateTime       @db.DateTime(0)
+  updated_at            DateTime       @db.DateTime(0)
+}
+
+model booth_list {
+  id             BigInt   @id @default(autoincrement())
+  booth_event_id BigInt
+  stamp_code     String   @unique(map: "stamp_code") @db.VarChar(100)
+  booth_name     String   @db.VarChar(255)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @db.DateTime(0)
+  updated_at     DateTime @db.DateTime(0)
+}
+
+model brands {
+  id              Int                   @id @default(autoincrement())
+  name_th         String                @db.VarChar(255)
+  name_en         String?               @db.VarChar(255)
+  logo_url        String?               @db.VarChar(500)
+  is_active       Boolean               @default(true)
+  type_id         Int?
+  created_at      DateTime?             @default(now()) @db.DateTime(0)
+  updated_at      DateTime?             @default(now()) @updatedAt @db.DateTime(0)
+  reward_type     checkIn_reward_types? @relation(fields: [type_id], references: [id], map: "fk_brands_to_reward_types")
+  checkIn_rewards checkIn_rewards[]
+
+  @@index([type_id], map: "idx_brand_type_id")
+}
+
+model category_master {
+  id          Int           @id @default(autoincrement())
+  scope       CategoryScope @default(both)
+  code        String        @db.VarChar(50)
+  name_th     String        @db.VarChar(255)
+  name_en     String        @db.VarChar(255)
+  description String?       @db.Text
+  is_active   Boolean?      @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime?     @default(now()) @db.DateTime(0)
+  updated_at  DateTime?     @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([scope, code], map: "uq_scope_code")
+  @@index([is_active], map: "idx_active")
+}
+
+model certifications {
+  id         Int       @id @default(autoincrement())
+  name_th    String    @db.VarChar(500)
+  name_en    String    @db.VarChar(500)
+  role_id    Int
+  is_active  Boolean?  @default(true)
+  created_by Int?
+  updated_by Int?
+  created_at DateTime? @db.DateTime(0)
+  updated_at DateTime? @db.DateTime(0)
+}
+
+model sub_certifications {
+  id               Int      @id @default(autoincrement())
+  certification_id Int
+  name_th          String   @db.VarChar(255)
+  name_en          String   @db.VarChar(255)
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  updated_at       DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  @@index([certification_id], map: "certification_id")
+}
+
+model checkIn_reward_redemptions {
+  id          Int                                @id @default(autoincrement())
+  user_id     Int
+  reward_id   Int?
+  points_used Int
+  status      checkIn_reward_redemptions_status? @default(pending)
+  redeemed_at DateTime?                          @default(now()) @db.Timestamp(0)
+  expires_at  DateTime?                          @db.Timestamp(0)
+  user        users                              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checkIn_reward_redemptions_ibfk_1")
+  reward      checkIn_rewards?                   @relation(fields: [reward_id], references: [id], onUpdate: NoAction, map: "checkIn_reward_redemptions_ibfk_2")
+
+  @@index([reward_id], map: "reward_id")
+  @@index([user_id], map: "user_id")
+}
+
+model checkIn_reward_types {
+  id              Int               @id @default(autoincrement())
+  name_th         String            @db.VarChar(255)
+  name_en         String            @db.VarChar(255)
+  description     String?           @db.Text
+  is_active       Boolean?          @default(true)
+  created_at      DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?         @default(now()) @updatedAt @db.Timestamp(0)
+  created_by      Int?
+  updated_by      Int?
+  brands          brands[]
+  checkIn_rewards checkIn_rewards[]
+}
+
+model checkIn_rewards {
+  id              Int                          @id @default(autoincrement())
+  title           String                       @db.VarChar(200)
+  description     String?                      @db.Text
+  conditions      String?                      @db.Text
+  image_url       String?                      @db.VarChar(1024)
+  redeem_code     String?                      @db.VarChar(255)
+  points_required Int
+  expiry_date     DateTime?                    @db.Date
+  is_active       Boolean?                     @default(true)
+  stock_quantity  Int?                         @default(-1)
+  created_at      DateTime?                    @default(now()) @db.Timestamp(0)
+  type_id         Int?
+  brand_id        Int?
+  status_redeem   String                       @default("available") @db.VarChar(20)
+  redeem_date     DateTime?                    @db.DateTime(0)
+  created_by      Int?
+  updated_by      Int?
+  updated_at      DateTime?                    @default(now()) @updatedAt @db.DateTime(0)
+  redemptions     checkIn_reward_redemptions[]
+  reward_type     checkIn_reward_types?        @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reward_type")
+  brand           brands?                      @relation(fields: [brand_id], references: [id], map: "fk_rewards_to_brands")
+
+  @@index([brand_id], map: "idx_brand_id")
+  @@index([type_id], map: "fk_reward_type")
+}
+
+model check_in_logs {
+  id          Int       @id @default(autoincrement())
+  user_id     Int
+  action      String?   @db.VarChar(50)
+  description String?   @db.VarChar(500)
+  metadata    Json?
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  user        users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "check_in_logs_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model content_category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(255)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  sort_order  Int?      @default(0)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model content_stats {
+  id           Int         @id @default(autoincrement()) @db.UnsignedInt
+  content_id   Int         @db.UnsignedInt
+  content_type ContentType
+  views        Int         @default(0) @db.UnsignedInt
+  likes        Int         @default(0) @db.UnsignedInt
+  dislikes     Int         @default(0) @db.UnsignedInt
+  created_at   DateTime    @default(now()) @db.DateTime(0)
+  updated_at   DateTime    @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([content_id, content_type], map: "content_id")
+}
+
+model credit_approval_logs {
+  id            Int                  @id @default(autoincrement())
+  credit_log_id Int?
+  approver_id   Int
+  approved_at   DateTime?            @db.DateTime(0)
+  status        CreditApprovalStatus @default(approved)
+  remark        String?              @db.Text
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime?            @db.DateTime(0)
+  updated_at    DateTime?            @db.DateTime(0)
+  credit_log    credit_logs?         @relation(fields: [credit_log_id], references: [id], map: "credit_approval_logs_ibfk_1")
+
+  @@index([credit_log_id], map: "credit_log_id")
+}
+
+model credit_logs {
+  id              Int                    @id @default(autoincrement())
+  credit_id       Int
+  reference_id    Int?
+  change          Decimal                @db.Decimal(10, 4)
+  type            String                 @db.VarChar(50)
+  description     String                 @db.Text
+  created_by      Int?
+  updated_by      Int?
+  created_at      DateTime?              @default(now()) @db.DateTime(0)
+  updated_at      DateTime?              @default(now()) @updatedAt @db.DateTime(0)
+  approval_logs   credit_approval_logs[]
+  credit_requests credit_requests[]
+}
+
+model credit_requests {
+  id            Int                 @id @default(autoincrement())
+  credit_id     Int
+  credit_log_id Int?
+  amount        Decimal             @db.Decimal(10, 4)
+  request_type  CreditRequestType   @default(topup)
+  status        CreditRequestStatus @default(pending)
+  requested_by  Int
+  approved_by   Int?
+  requested_at  DateTime?           @db.DateTime(0)
+  approved_at   DateTime?           @db.DateTime(0)
+  remark        String?             @db.Text
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime?           @db.DateTime(0)
+  updated_at    DateTime?           @db.DateTime(0)
+  credit        credits             @relation(fields: [credit_id], references: [id], onDelete: NoAction, map: "credit_requests_ibfk_1")
+  credit_log    credit_logs?        @relation(fields: [credit_log_id], references: [id], map: "credit_requests_ibfk_2")
+
+  @@index([credit_id], map: "credit_id")
+  @@index([credit_log_id], map: "credit_log_id")
+}
+
+model credits {
+  id              Int               @id @default(autoincrement())
+  user_id         Int
+  total_credits   Decimal           @default(0.0000) @db.Decimal(10, 4)
+  used_credits    Decimal           @default(0.0000) @db.Decimal(10, 4)
+  created_by      Int?
+  updated_by      Int?
+  created_at      DateTime?         @db.DateTime(0)
+  updated_at      DateTime?         @db.DateTime(0)
+  credit_requests credit_requests[]
+}
+
+model day_off {
+  id                 Int       @id @default(autoincrement())
+  request_user_id    Int
+  assign_user_id     Int
+  day_off_date       DateTime  @db.Date
+  month              Int       @db.TinyInt
+  year               Int       @db.SmallInt
+  schedule_master_id Int
+  status             String    @db.VarChar(255)
+  reason             String?   @db.Text
+  approve_user_id    Int
+  approve_date       DateTime? @db.Date
+  approve_at         DateTime? @db.DateTime(0)
+  remark             String?   @db.VarChar(255)
+  revoke_remark      String?   @db.VarChar(255)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime? @default(now()) @db.DateTime(0)
+  updated_at         DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  is_deleted         Boolean   @default(false)
+
+  @@index([request_user_id, month, year, status], map: "idx_user_month_year_status")
+  @@index([request_user_id, month, year], map: "idx_user_month_year")
+  @@index([request_user_id, day_off_date], map: "idx_user_date")
+}
+
+model department_category {
+  id              Int       @id @default(autoincrement())
+  department_id   Int
+  category_id     Int
+  sub_category_id Int?
+  is_primary      Boolean?  @default(false)
+  display_order   Int?      @default(0)
+  effective_start DateTime? @db.Date
+  effective_end   DateTime? @db.Date
+  is_active       Boolean?  @default(true)
+  created_by      Int?
+  updated_by      Int?
+  created_at      DateTime? @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([department_id, category_id, sub_category_id], map: "uq_dept_cat_sub")
+  @@index([is_active], map: "idx_active")
+  @@index([category_id], map: "idx_cat")
+  @@index([department_id], map: "idx_dept")
+  @@index([effective_start, effective_end], map: "idx_effective")
+  @@index([sub_category_id], map: "idx_subcat")
+}
+
+model department_absence_limit_configs {
+  id            Int         @id @default(autoincrement())
+  department_id Int
+  month         Int         @db.TinyInt
+  is_enabled    Boolean     @default(true)
+  monday        Int         @default(0)
+  tuesday       Int         @default(0)
+  wednesday     Int         @default(0)
+  thursday      Int         @default(0)
+  friday        Int         @default(0)
+  saturday      Int         @default(0)
+  sunday        Int         @default(0)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime?   @default(now()) @db.DateTime(0)
+  updated_at    DateTime?   @default(now()) @updatedAt @db.DateTime(0)
+  department    departments @relation(fields: [department_id], references: [id], onDelete: Cascade, map: "fk_dept_absence_limit_config_department")
+
+  @@unique([department_id, month], name: "uq_dept_month", map: "uq_dept_month")
+  @@index([department_id], map: "idx_department_id")
+}
+
+model department_certifications {
+  id               Int         @id @default(autoincrement())
+  department_id    Int
+  certification_id Int
+  created_by       Int?
+  created_at       DateTime?   @db.DateTime(0)
+  department       departments @relation(fields: [department_id], references: [id], onDelete: Cascade, map: "fk_dept_cert_department")
+  creator          users?      @relation("DeptCertCreator", fields: [created_by], references: [id], map: "fk_dept_cert_user")
+
+  @@unique([department_id, certification_id], map: "uq_dept_cert")
+  @@index([certification_id], map: "certification_id")
+  @@index([created_by], map: "created_by")
+  @@index([department_id], map: "department_id")
+}
+
+model department_operating_hours {
+  id            BigInt    @id @default(autoincrement())
+  department_id BigInt
+  weekday       Weekday
+  start_time    DateTime  @db.Time(0)
+  end_time      DateTime  @db.Time(0)
+  is_active     Boolean?  @default(true)
+  created_by    BigInt?
+  updated_by    BigInt?
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model department_supervisors {
+  id            BigInt                    @id @default(autoincrement())
+  department_id BigInt
+  user_id       BigInt
+  role          DepartmentSupervisorRole? @default(head)
+  is_active     Boolean?                  @default(true)
+  created_by    BigInt?
+  updated_by    BigInt?
+  created_at    DateTime?                 @default(now()) @db.DateTime(0)
+  updated_at    DateTime?                 @default(now()) @db.DateTime(0)
+
+  @@index([department_id, user_id, is_active], map: "idx_department_user_is_active")
+}
+
+model department_types {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(50)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @db.DateTime(0)
+  updated_at  DateTime? @db.DateTime(0)
+}
+
+model departments {
+  id                                        Int                                              @id @default(autoincrement())
+  name                                      String                                           @db.VarChar(255)
+  abbreviation                              String?                                          @db.VarChar(50)
+  type_id                                   Int
+  facility_id                               Int
+  parent_department_id                      Int?
+  is_active                                 Boolean?                                         @default(true)
+  created_by                                Int?
+  updated_by                                Int?
+  created_at                                DateTime?                                        @db.DateTime(0)
+  updated_at                                DateTime?                                        @db.DateTime(0)
+  dayoff_duedate                            Int?                                             @default(5)
+  schedule_announcement_date                Int?
+  schedule_announcement_time                DateTime?                                        @db.Time(0)
+  day_off_submission_start_date             Int?
+  day_off_submission_start_time             DateTime?                                        @db.Time(0)
+  day_off_submission_end_date               Int?
+  day_off_submission_end_time               DateTime?                                        @db.Time(0)
+  visibility_mode                           VisibilityMode                                   @default(none)
+  is_enabled_visibility_mode                Boolean                                          @default(true)
+  departmentAbsenceLimitConfigs             department_absence_limit_configs[]
+  include_weekend                           Boolean?                                         @default(true)
+  include_holiday                           Boolean?                                         @default(true)
+  role_tags                                 String?                                          @db.VarChar(100)
+  is_default                                Boolean?                                         @default(false)
+  is_deleted                                Boolean                                          @default(false)
+  department_certifications                 department_certifications[]
+  productivity_records                      productivity_records[]
+  user_group_tags                           user_group_tags[]
+  departmentRoleMinHours                    department_role_min_hours[]
+  schedulingRuleConfigs                     scheduling_rule_configs[]
+  schedulingRuleMinWorkingHours             scheduling_rule_min_working_hours[]
+  schedulingRuleMaxConsecutiveHours         scheduling_rule_max_consecutive_hours[]
+  schedulingRuleStaffConflictGroups         scheduling_rule_staff_conflict_groups[]
+  schedulingRuleShiftPairings               scheduling_rule_shift_pairings[]
+  schedulingRuleShiftExclusions             scheduling_rule_shift_exclusions[]
+  schedulingRuleBlockedConsecutives         scheduling_rule_blocked_consecutives[]
+  schedulingRuleStaffShiftPreferences       scheduling_rule_staff_shift_preferences[]
+  schedulingRuleRequiredStaffShifts         scheduling_rule_required_staff_shifts[]
+  schedulingRuleShiftCountLimits            scheduling_rule_shift_count_limits[]
+  schedulingRuleExceptionConfigs            scheduling_rule_exception_configs[]
+  schedulingRuleConsecutiveShiftLimitGroups scheduling_rule_consecutive_shift_limit_groups[]
+  diagnosis_logs                            diagnosis_logs[]
+  auto_schedule_no_solution_logs            auto_schedule_no_solution_logs[]
+
+  @@index([abbreviation, is_active], map: "idx_abbreviation_is_active")
+  @@index([facility_id, id], map: "idx_facility_department")
+}
+
+model districts {
+  id               Int      @id @default(autoincrement())
+  province_code    Int
+  district_code    Int      @unique(map: "district_code")
+  district_name_th String   @db.VarChar(255)
+  district_name_en String   @db.VarChar(255)
+  postal_code      String   @db.VarChar(10)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  updated_at       DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  @@index([province_code], map: "idx_province")
+  @@index([district_code], map: "idx_district")
+}
+
+model document_sub_types {
+  id               Int              @id @default(autoincrement())
+  sub_type_code    String           @unique(map: "sub_type_code") @db.VarChar(50)
+  sub_type_name    String           @db.VarChar(255)
+  description      String?          @db.VarChar(255)
+  is_active        Boolean          @default(true)
+  document_type_id Int?
+  document_types   document_types?  @relation(fields: [document_type_id], references: [id])
+  role_documents   role_documents[]
+  user_documents   user_documents[]
+
+  @@index([document_type_id], map: "idx_document_sub_types_document_type_id")
+}
+
+model document_types {
+  id                 Int                  @id @default(autoincrement())
+  type_code          String               @unique(map: "type_code") @db.VarChar(50)
+  type_name          String               @db.VarChar(100)
+  description        String?              @db.VarChar(255)
+  is_active          Boolean?             @default(true)
+  document_sub_types document_sub_types[]
+  user_documents     user_documents[]
+}
+
+model duty_types {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique(map: "code") @db.VarChar(50)
+  name        String    @db.VarChar(100)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  created_by  Int?
+  updated_by  Int?
+
+  @@index([code], map: "idx_duty_types_code")
+  @@index([created_by], map: "idx_duty_types_created_by")
+  @@index([is_active], map: "idx_duty_types_is_active")
+  @@index([name], map: "idx_duty_types_name")
+  @@index([updated_by], map: "idx_duty_types_updated_by")
+}
+
+model education_degrees {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(255)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model education_institutions {
+  id           Int       @id @default(autoincrement())
+  name         String    @unique(map: "name") @db.VarChar(255)
+  country_code String    @db.VarChar(10)
+  is_active    Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by   Int?
+  updated_by   Int?
+}
+
+model educations {
+  id             Int       @id @default(autoincrement())
+  user_id        Int
+  degree_id      Int
+  institution_id Int
+  field_of_study String?   @db.VarChar(255)
+  document_url   String?   @db.VarChar(255)
+  is_active      Boolean?  @default(true)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  start_date     DateTime? @db.Date
+  graduate_date  DateTime? @db.Date
+  created_by     Int?
+  updated_by     Int?
+}
+
+model event_credit_types {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique(map: "uk_credit_types_name") @db.VarChar(50)
+  full_name     String?         @db.VarChar(255)
+  event_credits event_credits[]
+}
+
+model event_credits {
+  id             Int                @id @default(autoincrement())
+  event_id       Int
+  credit_type_id Int
+  score          Decimal            @db.Decimal(5, 2)
+  event          events             @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_event_credits_event")
+  credit_type    event_credit_types @relation(fields: [credit_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_event_credits_type")
+
+  @@unique([event_id, credit_type_id], map: "uk_event_credit")
+  @@index([credit_type_id], map: "fk_event_credits_type")
+}
+
+model event_rewards {
+  id             BigInt   @id @default(autoincrement())
+  booth_event_id BigInt
+  user_id        Int
+  redeemed_at    DateTime @db.DateTime(0)
+}
+
+model events {
+  id               Int             @id @default(autoincrement())
+  title            String          @db.VarChar(255)
+  description      String?         @db.Text
+  content          String?         @db.Text
+  start_date       DateTime?       @db.DateTime(0)
+  end_date         DateTime?       @db.DateTime(0)
+  location         String?         @db.VarChar(255)
+  max_participants Int?
+  image_url        String?         @db.VarChar(255)
+  url              String?         @db.VarChar(255)
+  contact_name     String?         @db.VarChar(255)
+  contact_email    String?         @db.VarChar(255)
+  contact_phone    String?         @db.VarChar(100)
+  role_tags        String?         @db.VarChar(100)
+  is_active        Boolean?        @default(true)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?       @default(now()) @updatedAt @db.Timestamp(0)
+  event_credits    event_credits[]
+}
+
+model events_translations {
+  id            Int       @id @default(autoincrement())
+  event_id      Int
+  language_code String    @db.VarChar(10)
+  title         String    @db.VarChar(255)
+  description   String?   @db.Text
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@unique([event_id, language_code], map: "event_id")
+}
+
+model facilities {
+  id                             Int                              @id @default(autoincrement())
+  name                           String                           @db.VarChar(255)
+  type_id                        Int
+  latitude                       Decimal?                         @db.Decimal(9, 6)
+  longitude                      Decimal?                         @db.Decimal(9, 6)
+  address                        String?                          @db.VarChar(255)
+  is_active                      Boolean?                         @default(true)
+  // TODO use this flag to check facility is available or not
+  full_schedule                  Boolean?
+  mediact_match                  Boolean?
+  created_by                     Int?
+  updated_by                     Int?
+  created_at                     DateTime?                        @db.DateTime(0)
+  updated_at                     DateTime?                        @db.DateTime(0)
+  abbreviation                   String?                          @db.VarChar(50)
+  country_code                   String?                          @db.VarChar(50)
+  country_name_th                String?                          @db.VarChar(50)
+  country_name_en                String?                          @db.VarChar(100)
+  province_code                  Int?
+  province_name_th               String?                          @db.VarChar(50)
+  province_name_en               String?                          @db.VarChar(100)
+  district_code                  Int?
+  district_name_th               String?                          @db.VarChar(50)
+  district_name_en               String?                          @db.VarChar(100)
+  subdistrict_code               Int?
+  subdistrict_name_th            String?                          @db.VarChar(50)
+  subdistrict_name_en            String?                          @db.VarChar(100)
+  postal_code                    String?                          @db.VarChar(10)
+  facility_type                  facility_types                   @relation(fields: [type_id], references: [id], onDelete: NoAction, map: "facilities_ibfk_112")
+  creator                        users?                           @relation("FacilityCreator", fields: [created_by], references: [id], map: "facilities_ibfk_113")
+  updater                        users?                           @relation("FacilityUpdater", fields: [updated_by], references: [id], map: "facilities_ibfk_114")
+  facility_leave_limits          facility_leave_limits[]
+  user_product_access            user_product_access[]
+  diagnosis_logs                 diagnosis_logs[]
+  auto_schedule_no_solution_logs auto_schedule_no_solution_logs[]
+
+  // ─── NEW: Organization Profile ───
+  logo_url         String?         @db.VarChar(500) // URL ของ logo ที่ upload
+  description      String?         @db.Text // About Hospital
+  google_maps_url  String?         @db.VarChar(1000) // Location Link (Google Maps URL)
+  facility_size_id Int?
+  facility_size    facility_sizes? @relation(fields: [facility_size_id], references: [id])
+
+  @@index([facility_size_id])
+  @@index([created_by], map: "created_by")
+  @@index([type_id], map: "type_id")
+  @@index([updated_by], map: "updated_by")
+  @@index([abbreviation, is_active], map: "abbreviation")
+}
+
+model facility_admins {
+  id          Int       @id @default(autoincrement())
+  facility_id Int
+  user_id     Int
+  assigned_at DateTime? @default(now()) @db.DateTime(0)
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @db.DateTime(0)
+}
+
+model facility_director {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  facility_id      Int
+  role_id          String    @default("hospital_director") @db.VarChar(50)
+  is_primary       Boolean?  @default(true)
+  appointment_no   String?   @db.VarChar(100)
+  appointment_date DateTime? @db.Date
+  effective_start  DateTime  @db.Date
+  effective_end    DateTime? @db.Date
+  notes            String?   @db.Text
+  is_active        Boolean?  @default(true)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime? @default(now()) @db.DateTime(0)
+  updated_at       DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([facility_id, user_id, role_id, effective_start], map: "uq_fac_user_role_start")
+  @@index([is_active], map: "idx_active")
+  @@index([effective_start, effective_end], map: "idx_effective_window")
+  @@index([facility_id], map: "idx_facility")
+  @@index([role_id], map: "idx_role")
+  @@index([user_id], map: "idx_user")
+}
+
+model facility_holidays {
+  id           Int       @id @default(autoincrement())
+  facility_id  Int
+  holiday_date DateTime  @db.Date
+  name         String    @db.VarChar(255)
+  is_recurring Boolean?  @default(false)
+  description  String?   @db.Text
+  created_by   Int?
+  updated_by   Int?
+  created_at   DateTime? @default(now()) @db.DateTime(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model default_holidays {
+  id           Int       @id @default(autoincrement())
+  holiday_date DateTime  @db.Date
+  name         String    @db.VarChar(255)
+  is_recurring Boolean?  @default(true)
+  description  String?   @db.Text
+  is_active    Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.DateTime(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([holiday_date, name], map: "unique_holiday_date_name")
+}
+
+model facility_leave_limits {
+  id            Int         @id @default(autoincrement())
+  facility_id   Int
+  leave_type_id Int
+  max_days      Int
+  created_at    DateTime?   @default(now()) @db.DateTime(0)
+  updated_at    DateTime?   @default(now()) @updatedAt @db.DateTime(0)
+  created_by    Int?
+  updated_by    Int?
+  facility      facilities  @relation(fields: [facility_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "facility_leave_limits_ibfk_1")
+  leave_type    leave_types @relation(fields: [leave_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "facility_leave_limits_ibfk_2")
+
+  @@unique([facility_id, leave_type_id], map: "facility_id")
+  @@index([leave_type_id], map: "leave_type_id")
+}
+
+model facility_types {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique(map: "name") @db.VarChar(50)
+  description    String?          @db.Text
+  is_active      Boolean?         @default(true)
+  created_by     Int?
+  updated_by     Int?
+  created_at     DateTime?        @db.DateTime(0)
+  updated_at     DateTime?        @db.DateTime(0)
+  facilities     facilities[]
+  facility_sizes facility_sizes[]
+}
+
+model gender {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique(map: "name") @db.VarChar(50)
+  description String?  @db.VarChar(255)
+  is_active   Boolean? @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime @db.DateTime(0)
+  updated_at  DateTime @db.DateTime(0)
+}
+
+model give_shift_requests {
+  id                       Int                          @id @default(autoincrement())
+  user_id                  Int
+  shift_id                 Int?
+  original_shift_type_id   Int
+  original_shift_type_name String?                      @db.VarChar(100)
+  target_user_id           Int
+  target_approve_status    GiveShiftTargetApproveStatus @default(PENDING)
+  status                   GiveShiftStatus              @default(PENDING)
+  remark                   String?                      @db.VarChar(255)
+  target_remark            String?                      @db.VarChar(255)
+  approve_remark           String?                      @db.VarChar(255)
+  approve_user_id          Int?
+  approve_date             DateTime?                    @db.DateTime(0)
+  schedule_master_id       Int?
+  month                    Int?                         @db.TinyInt
+  year                     Int?                         @db.SmallInt
+  created_by               Int?
+  updated_by               Int?
+  created_at               DateTime?                    @default(now()) @db.DateTime(0)
+  updated_at               DateTime?                    @default(now()) @updatedAt @db.DateTime(0)
+  target_approve_date      DateTime?                    @db.DateTime(0)
+  is_deleted               Boolean                      @default(false)
+  user                     users                        @relation("GiveShiftUser", fields: [user_id], references: [id], onDelete: Cascade, map: "fk_give_shift_req_user")
+  // shift                    schedule_shifts?             @relation(fields: [shift_id], references: [id], map: "fk_give_shift_schedule_id")
+  target_user              users                        @relation("GiveShiftTarget", fields: [target_user_id], references: [id], onDelete: Cascade, map: "fk_give_shift_target_user")
+
+  @@index([shift_id], map: "idx_give_shift_schedule")
+  @@index([target_user_id], map: "idx_give_shift_target")
+  @@index([user_id], map: "idx_give_shift_user")
+}
+
+model health_region_provinces {
+  health_region_id Int    @db.UnsignedTinyInt
+  province_geocode String @db.Char(2)
+
+  @@id([health_region_id, province_geocode])
+  @@index([province_geocode], map: "idx_province")
+}
+
+model health_regions {
+  id             Int    @id @db.UnsignedTinyInt
+  region_code    String @db.Char(2)
+  region_name_th String @db.VarChar(100)
+  region_name_en String @db.VarChar(100)
+}
+
+model institutions {
+  id           Int       @id @default(autoincrement())
+  name_th      String    @db.VarChar(500)
+  name_en      String    @db.VarChar(500)
+  country_code String    @db.VarChar(10)
+  is_active    Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by   Int?
+  updated_by   Int?
+}
+
+model job_applies {
+  id               Int                @id @default(autoincrement())
+  job_id           Int
+  user_id          Int
+  status_id        Int
+  apply_date       DateTime?          @default(now()) @db.DateTime(0)
+  remark           String?            @db.VarChar(255)
+  approve_user_id  Int?
+  approve_date     DateTime?          @db.DateTime(0)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime?          @default(now()) @db.DateTime(0)
+  updated_at       DateTime?          @default(now()) @updatedAt @db.DateTime(0)
+  withdraw_date    DateTime?          @db.DateTime(0)
+  applicant_review applicant_reviews?
+
+  @@index([user_id, status_id, apply_date(sort: Desc)], map: "idx_job_applies_user_status_apply_date")
+  @@index([job_id, status_id, withdraw_date], map: "idx_job_applies_job_status_withdraw")
+}
+
+model job_certifications {
+  id               Int       @id @default(autoincrement())
+  job_id           Int
+  certification_id Int
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime? @default(now()) @db.DateTime(0)
+  updated_at       DateTime? @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model job_statuses {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(50)
+  description String?   @db.VarChar(255)
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model job_types {
+  id               Int      @id @default(autoincrement())
+  job_type_code    String   @unique(map: "job_type_code") @db.VarChar(50)
+  job_type_name_th String   @db.VarChar(100)
+  job_type_name_en String   @db.VarChar(100)
+  description      String?  @db.Text
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  updated_at       DateTime @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model jobs {
+  id                     Int               @id @default(autoincrement())
+  job_code               String?           @db.VarChar(30)
+  source_schedule_id     Int?
+  job_title              String            @db.VarChar(255)
+  job_description        String?           @db.Text
+  work_date              DateTime          @db.Date
+  start_time             DateTime          @db.Time(0)
+  end_time               DateTime          @db.Time(0)
+  required_role_id       Int?
+  required_department_id Int?
+  publish_group          JobPublishGroup   @default(hospital)
+  is_public              Boolean?          @default(true)
+  status_id              Int
+  rejection_reason       String?           @db.VarChar(250)
+  approved_by            Int?
+  approved_at            DateTime?         @db.DateTime(0)
+  created_by             Int?
+  updated_by             Int?
+  created_at             DateTime?         @default(now()) @db.DateTime(0)
+  updated_at             DateTime?         @default(now()) @updatedAt @db.DateTime(0)
+  max_applicants         Int?
+  application_deadline   DateTime?         @db.DateTime(0)
+  job_fee                Decimal?          @db.Decimal(10, 2)
+  job_fee_vat_included   Boolean?          @default(true)
+  auto_close_type        JobAutoCloseType? @default(time)
+  experience_range       String?           @db.VarChar(50)
+  shift_type_id          Int?
+
+  // -- ฟิลด์ใหม่สำหรับ Part-time Version (ทุกฟิลด์เป็น Nullable) --
+  min_wage                   Decimal?   @db.Decimal(10, 2)
+  max_wage                   Decimal?   @db.Decimal(10, 2)
+  currency                   String?    @db.VarChar(10)
+  wage_type                  wage_type? // ดู Enum ด้านล่าง
+  hide_compensation          Boolean?
+  switch_to_next_audience    Boolean?
+  publish_group_interval_min Int?
+  is_schedule                Boolean?
+  schedule_start_at          DateTime?  @db.DateTime(0)
+  facility_package_id        Int?
+  min_experience_year        Int?
+  max_experience_year        Int?
+
+  // Relations สำหรับ Table ใหม่
+  candidate_levels    job_candidate_levels[]
+  specialties         job_specialties[]
+  matched_users       job_matched_users[]
+  jobUnits            job_units[]
+  jobSwitchingLogs    job_switching_logs[]
+  autoMatchUserOffers job_auto_match_user_offers[]
+
+  @@index([job_code], map: "idx_jobs_job_code")
+  @@index([created_by], map: "idx_jobs_created_by")
+  @@index([approved_by], map: "idx_jobs_approved_by")
+}
+
+model job_code_sequences {
+  id          Int    @id @default(autoincrement())
+  facility_id Int
+  prefix      String @db.VarChar(50)
+  seq         Int    @default(0)
+
+  @@unique([prefix], map: "uq_job_code_sequences_prefix")
+  @@index([facility_id], map: "idx_job_code_sequences_facility_id")
+}
+
+model job_candidate_levels {
+  id         Int      @id @default(autoincrement())
+  job_id     Int
+  level      Int // 1, 2, 3
+  created_at DateTime @default(now()) @db.DateTime(0)
+
+  job jobs @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@index([job_id]) // สร้าง Index ตาม Non-functional Requirement
+}
+
+model job_specialties {
+  id                   Int      @id @default(autoincrement())
+  job_id               Int
+  certification_id     Int
+  sub_certification_id Int?
+  created_at           DateTime @default(now()) @db.DateTime(0)
+
+  job jobs @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@index([job_id]) // สร้าง Index ตาม Non-functional Requirement
+}
+
+model job_units {
+  id                     Int      @id @default(autoincrement())
+  job_id                 Int
+  category_master_id     Int // อ้างอิงหน่วยงานหลัก (Unit)
+  sub_category_master_id Int? // อ้างอิงหน่วยงานย่อย (Sub-unit) เป็น NULL ได้
+  created_at             DateTime @default(now()) @db.DateTime(0)
+
+  // Relations
+  job jobs @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@index([job_id]) // สร้าง Index บน job_id เพื่อประสิทธิภาพในการ Query
+}
+
+model job_switching_logs {
+  id                 Int      @id @default(autoincrement())
+  job_id             Int
+  from_publish_group String   @db.VarChar(20) // ค่า publishGroup ก่อนเปลี่ยน
+  to_publish_group   String   @db.VarChar(20) // ค่า publishGroup หลังเปลี่ยน
+  switched_at        DateTime @default(now()) @db.DateTime(0)
+
+  // Relations
+  job jobs @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@index([job_id]) // สร้าง Index บน job_id ตามข้อกำหนด
+}
+
+model job_matched_users {
+  id         Int      @id @default(autoincrement())
+  job_id     Int
+  user_id    Int
+  fit_score  Decimal? @db.Decimal(5, 2)
+  matched_at DateTime @default(now()) @db.DateTime(0)
+  created_at DateTime @default(now()) @db.DateTime(0)
+
+  job  jobs  @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([job_id, user_id], map: "uq_job_matched_users")
+  @@index([job_id], map: "idx_job_matched_job_id")
+  @@index([user_id], map: "idx_job_matched_user_id")
+}
+
+enum specialty_type {
+  specialty
+  sub_specialty
+}
+
+model leave_request {
+  id                 Int       @id @default(autoincrement())
+  user_id            Int
+  leave_type_id      Int
+  shift_list         String?   @db.VarChar(255)
+  month              Int       @db.TinyInt
+  year               Int       @db.SmallInt
+  schedule_master_id Int?
+  leave_date         DateTime  @db.Date
+  start_time         DateTime  @db.Time(0)
+  end_time           DateTime  @db.Time(0)
+  reason             String?   @db.Text
+  status             String    @db.VarChar(255)
+  approve_user_id    Int?
+  approve_date       DateTime? @db.Date
+  approve_at         DateTime? @db.DateTime(0)
+  remark             String?   @db.VarChar(255)
+  revoke_remark      String?   @db.VarChar(255)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime? @default(now()) @db.DateTime(0)
+  updated_at         DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  is_deleted         Boolean   @default(false)
+
+  @@index([user_id, month, year], map: "idx_month_year")
+  @@index([user_id, month, year, status], map: "idx_month_year_status")
+  @@index([user_id, leave_date], map: "idx_user_leave_date")
+}
+
+model leave_types {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(255)
+  description           String?                 @db.Text
+  is_active             Boolean?                @default(true)
+  created_at            DateTime?               @default(now()) @db.DateTime(0)
+  updated_at            DateTime?               @default(now()) @updatedAt @db.DateTime(0)
+  created_by            Int?
+  updated_by            Int?
+  facility_leave_limits facility_leave_limits[]
+}
+
+model master_cities {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(255)
+  state_id     Int
+  country_code String    @db.VarChar(10)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model master_countries {
+  id         Int       @id @default(autoincrement())
+  code       String    @unique(map: "code") @db.VarChar(10)
+  name       String    @unique(map: "name") @db.VarChar(255)
+  region     String?   @db.VarChar(100)
+  sub_region String?   @db.VarChar(100)
+  latitude   Decimal?  @db.Decimal(9, 6)
+  longitude  Decimal?  @db.Decimal(9, 6)
+  phone_code String?   @db.VarChar(10)
+  is_active  Boolean?  @default(true)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by Int?
+  updated_by Int?
+}
+
+model master_postal_codes {
+  id         Int       @id @default(autoincrement())
+  code       String    @db.VarChar(20)
+  city_id    Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model master_states {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(255)
+  country_code String    @db.VarChar(10)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model news {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(255)
+  content     String?   @db.Text
+  category    String?   @db.VarChar(255)
+  category_id String?   @db.VarChar(50)
+  image_url   String?   @db.VarChar(255)
+  url         String?   @db.VarChar(255)
+  role_tags   String?   @db.VarChar(100)
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model notification_booth_events {
+  id                 Int                             @id @default(autoincrement())
+  title              String                          @db.VarChar(255)
+  content            String                          @db.Text
+  start_datetime     DateTime                        @db.DateTime(0)
+  end_datetime       DateTime                        @db.DateTime(0)
+  is_active          Boolean?                        @default(true)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime                        @default(now()) @db.DateTime(0)
+  updated_at         DateTime                        @default(now()) @updatedAt @db.DateTime(0)
+  registration_limit Int?                            @db.UnsignedInt
+  recipients         notification_recipient_events[]
+}
+
+model notification_recipient_events {
+  id              Int                       @id @default(autoincrement())
+  notification_id Int
+  user_id         Int
+  is_read         Boolean?                  @default(false)
+  read_at         DateTime?                 @db.DateTime(0)
+  responded       Boolean?                  @default(false)
+  responded_at    DateTime?                 @db.DateTime(0)
+  is_selected     Boolean?                  @default(false)
+  created_by      Int?
+  updated_by      Int?
+  created_at      DateTime                  @default(now()) @db.DateTime(0)
+  updated_at      DateTime                  @default(now()) @updatedAt @db.DateTime(0)
+  notification    notification_booth_events @relation(fields: [notification_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notification_recipient_notification")
+  user            users                     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notification_recipient_user")
+
+  @@index([notification_id], map: "fk_notification_recipient_notification")
+  @@index([user_id], map: "fk_notification_recipient_user")
+}
+
+model notification_types {
+  id            Int             @id @default(autoincrement())
+  type_code     String          @unique(map: "type_code") @db.VarChar(50)
+  type_name_th  String          @db.VarChar(100)
+  type_name_en  String          @db.VarChar(100)
+  sequence      Int             @default(99)
+  is_active     Boolean         @default(true)
+  created_at    DateTime?       @default(now()) @db.DateTime(0)
+  updated_at    DateTime?       @default(now()) @updatedAt @db.DateTime(0)
+  notifications notifications[]
+
+  @@index([sequence], map: "idx_sequence")
+}
+
+model notifications {
+  id                   BigInt                    @id @default(autoincrement())
+  title                String                    @db.VarChar(255)
+  message              String                    @db.Text
+  notification_type_id Int?
+  data_payload         Json?
+  target_channel       NotificationTargetChannel
+  target_value         String?                   @db.Text
+  channels             Json?
+  scheduled_at         DateTime?                 @db.DateTime(0)
+  sent_at              DateTime?                 @db.DateTime(0)
+  status               NotificationStatus        @default(pending)
+  created_by           BigInt?
+  updated_by           BigInt?
+  created_at           DateTime?                 @db.DateTime(0)
+  updated_at           DateTime?                 @db.DateTime(0)
+  notification_type    notification_types?       @relation(fields: [notification_type_id], references: [id], map: "fk_notifications_to_types")
+
+  @@index([notification_type_id], map: "idx_notification_type_id")
+}
+
+model partner_address {
+  id                  Int       @id @default(autoincrement())
+  partner_id          Int
+  address_type_id     Int
+  address             String    @db.VarChar(255)
+  country_code        String?   @db.VarChar(50)
+  province_code       Int?
+  district_code       Int?
+  subdistrict_code    Int?
+  province            String?   @db.VarChar(255)
+  district            String?   @db.VarChar(100)
+  sub_district        String?   @db.VarChar(100)
+  postal_code         String    @db.VarChar(5)
+  country             String?   @db.VarChar(100)
+  is_active           Boolean?  @default(true)
+  created_by          Int?
+  updated_by          Int?
+  created_at          DateTime? @default(now()) @db.DateTime(0)
+  updated_at          DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  country_name_en     String    @db.VarChar(100)
+  country_name_th     String    @db.VarChar(50)
+  district_name_en    String    @db.VarChar(100)
+  district_name_th    String    @db.VarChar(50)
+  province_name_en    String    @db.VarChar(100)
+  province_name_th    String    @db.VarChar(50)
+  subdistrict_name_en String    @db.VarChar(100)
+  subdistrict_name_th String    @db.VarChar(50)
+}
+
+model partner_reference_files {
+  id         Int       @id @default(autoincrement())
+  partner_id Int
+  file_url   String    @db.VarChar(1024)
+  is_active  Boolean?  @default(true)
+  created_by Int?
+  updated_by Int?
+  created_at DateTime? @default(now()) @db.DateTime(0)
+  updated_at DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  file_name  String    @db.VarChar(50)
+}
+
+model partner_status {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(50)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model partner_type {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
+  description String?  @db.Text
+  is_active   Boolean? @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @updatedAt @db.DateTime(0)
+}
+
+model preference_key_types {
+  id                            Int                             @id @default(autoincrement())
+  type_code                     String                          @unique(map: "type_code") @db.VarChar(50)
+  type_name_th                  String                          @db.VarChar(100)
+  type_name_en                  String?                         @db.VarChar(100)
+  is_active                     Boolean                         @default(true)
+  created_at                    DateTime?                       @default(now()) @db.DateTime(0)
+  updated_at                    DateTime?                       @default(now()) @updatedAt @db.DateTime(0)
+  user_notification_preferences user_notification_preferences[]
+}
+
+model productivity_records {
+  id                        Int                         @id @default(autoincrement())
+  department_id             Int
+  shift_date                DateTime                    @db.Date
+  shift_type_id             Int
+  total_beds                Int                         @default(0)
+  critical_patients         Int                         @default(0)
+  severe_patients           Int                         @default(0)
+  semi_critical_patients    Int                         @default(0)
+  moderate_patients         Int                         @default(0)
+  convalescing_patients     Int                         @default(0)
+  admitted_patients         Int                         @default(0)
+  discharged_patients       Int                         @default(0)
+  total_patients_calculated Int?
+  free_beds_calculated      Int?
+  bed_occupancy_rate        Decimal?                    @db.Decimal(6, 2)
+  productivity_score        Decimal?                    @db.Decimal(10, 2)
+  created_by                Int?
+  updated_by                Int?
+  created_at                DateTime                    @default(now()) @db.Timestamp(0)
+  updated_at                DateTime                    @default(now()) @updatedAt @db.Timestamp(0)
+  creator                   users?                      @relation("ProductivityCreator", fields: [created_by], references: [id], map: "fk_productivity_created_by")
+  department                departments                 @relation(fields: [department_id], references: [id], onDelete: Cascade, map: "fk_productivity_department_id")
+  shift_type                shift_types                 @relation(fields: [shift_type_id], references: [id], map: "fk_productivity_shift_type_id")
+  updater                   users?                      @relation("ProductivityUpdater", fields: [updated_by], references: [id], map: "fk_productivity_updated_by")
+  logs                      productivity_records_logs[]
+
+  @@index([created_by], map: "fk_productivity_created_by")
+  @@index([department_id], map: "fk_productivity_department_id")
+  @@index([shift_type_id], map: "fk_productivity_shift_type_id")
+  @@index([updated_by], map: "fk_productivity_updated_by")
+  @@index([department_id, shift_type_id, shift_date], map: "idx_prod_uniq")
+}
+
+model productivity_records_logs {
+  id                        BigInt               @id @default(autoincrement())
+  record_id                 Int
+  action_type               String               @db.VarChar(10)
+  action_by                 Int?
+  action_at                 DateTime             @default(now()) @db.Timestamp(0)
+  department_id             Int
+  shift_date                DateTime             @db.Date
+  shift_type_id             Int
+  total_beds                Int                  @default(0)
+  critical_patients         Int                  @default(0)
+  severe_patients           Int                  @default(0)
+  semi_critical_patients    Int                  @default(0)
+  moderate_patients         Int                  @default(0)
+  convalescing_patients     Int                  @default(0)
+  admitted_patients         Int                  @default(0)
+  discharged_patients       Int                  @default(0)
+  total_patients_calculated Int?
+  free_beds_calculated      Int?
+  bed_occupancy_rate        Decimal?             @db.Decimal(5, 2)
+  productivity_score        Decimal?             @db.Decimal(10, 2)
+  action_user               users?               @relation("ProductivityLogAction", fields: [action_by], references: [id], map: "fk_log_action_by")
+  record                    productivity_records @relation(fields: [record_id], references: [id], onDelete: Cascade, map: "fk_log_record_id")
+
+  @@index([action_by], map: "idx_action_by")
+  @@index([record_id], map: "idx_record_id")
+}
+
+model provinces {
+  id               Int          @id @default(autoincrement())
+  province_code    Int          @unique(map: "province_code")
+  province_name_th String       @db.VarChar(255)
+  province_name_en String       @db.VarChar(255)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime     @default(now()) @db.DateTime(0)
+  updated_at       DateTime     @default(now()) @updatedAt @db.DateTime(0)
+  work_areas       work_areas[]
+
+  @@index([province_code], map: "province_code_idx")
+}
+
+model refresh_tokens {
+  id          Int       @id @default(autoincrement())
+  user_id     Int
+  token       String    @unique(map: "uk_token", length: 255) @db.Text
+  expires_at  DateTime  @db.DateTime(0)
+  is_revoked  Boolean?  @default(false)
+  device_info String?   @db.VarChar(500)
+  ip_address  String?   @db.VarChar(45)
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  user        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_refresh_tokens_user_id")
+
+  @@index([expires_at], map: "idx_expires_at")
+  @@index([is_revoked], map: "idx_is_revoked")
+  @@index([token(length: 255)], map: "idx_token")
+  @@index([user_id, is_revoked], map: "idx_user_active")
+  @@index([user_id], map: "idx_user_id")
+  @@index([expires_at], map: "refresh_tokens_expires_at")
+  @@index([is_revoked], map: "refresh_tokens_is_revoked")
+  @@index([user_id], map: "refresh_tokens_user_id")
+}
+
+model request_shifts {
+  id              Int         @id @default(autoincrement())
+  request_user_id Int
+  request_date    DateTime    @db.Date
+  month           Int         @db.TinyInt
+  year            Int         @db.SmallInt
+  shift_type_id   Int
+  status          String      @default("Pending") @db.VarChar(50)
+  approve_user_id Int?
+  approve_date    DateTime?   @db.DateTime(0)
+  approve_at      DateTime?   @db.DateTime(0)
+  remark          String?     @db.VarChar(255)
+  reason          String?     @db.Text
+  revoke_remark   String?     @db.VarChar(255)
+  created_by      Int?
+  updated_by      Int?
+  created_at      DateTime    @default(now()) @db.DateTime(0)
+  updated_at      DateTime    @default(now()) @updatedAt @db.DateTime(0)
+  is_deleted      Boolean     @default(false)
+  approve_user    users?      @relation("RequestShiftApprover", fields: [approve_user_id], references: [id], map: "fk_request_shifts_approve_user")
+  request_user    users       @relation("RequestShiftUser", fields: [request_user_id], references: [id], onDelete: Cascade, map: "fk_request_shifts_request_user")
+  shift_type      shift_types @relation(fields: [shift_type_id], references: [id], onDelete: Cascade, map: "fk_request_shifts_shift_type")
+
+  @@index([approve_user_id], map: "idx_request_shifts_approve_user")
+  @@index([request_user_id], map: "idx_request_shifts_request_user")
+  @@index([shift_type_id], map: "idx_request_shifts_shift_type")
+  @@index([request_user_id, month, year], map: "idx_request_shifts_request_user_month_year")
+  @@index([request_user_id, month, year, status], map: "idx_request_shifts_request_user_month_year_status")
+  @@index([request_user_id, request_date], map: "idx_request_shifts_request_user_request_date")
+}
+
+model role_documents {
+  role_id              Int
+  document_sub_type_id Int
+  role                 roles              @relation(fields: [role_id], references: [id], onDelete: Cascade, map: "fk_req_to_roles")
+  document_sub_type    document_sub_types @relation(fields: [document_sub_type_id], references: [id], onDelete: Cascade, map: "fk_req_to_sub_types")
+
+  @@id([role_id, document_sub_type_id])
+  @@index([document_sub_type_id], map: "fk_req_to_sub_types")
+}
+
+model roles {
+  id                            Int                                 @id @default(autoincrement())
+  name                          String                              @unique(map: "name") @db.VarChar(50)
+  description                   String?                             @db.Text
+  user_view                     Boolean?                            @default(true)
+  sort_order                    Int?
+  is_active                     Boolean?                            @default(true)
+  created_by                    Int?
+  updated_by                    Int?
+  created_at                    DateTime?                           @db.DateTime(0)
+  updated_at                    DateTime?                           @db.DateTime(0)
+  role_documents                role_documents[]
+  shift_type_roles              shift_type_roles[]
+  user_group_tags               user_group_tags[]
+  departmentRoleMinHours        department_role_min_hours[]
+  schedulingRuleMinWorkingHours scheduling_rule_min_working_hours[]
+}
+
+model schedule_history {
+  id                 Int       @id @default(autoincrement())
+  schedule_master_id Int
+  action             String    @db.VarChar(50)
+  status_id          Int
+  user_id            Int
+  remarks            String?   @db.Text
+  created_at         DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model schedule_master {
+  id                            Int       @id @default(autoincrement())
+  department_id                 Int
+  facility_id                   Int
+  date                          DateTime  @db.Date
+  month                         Int       @db.TinyInt
+  year                          Int       @db.SmallInt
+  status_id                     Int
+  is_active                     Boolean?  @default(true)
+  created_by                    Int?
+  updated_by                    Int?
+  created_at                    DateTime? @db.DateTime(0)
+  updated_at                    DateTime? @db.DateTime(0)
+  department_name               String?   @db.VarChar(255)
+  total_working_days            Int?
+  working_hours_per_person      Decimal?  @db.Decimal(6, 2)
+  total_dayoffs                 Int?
+  total_holidays                Int?
+  total_fte                     Decimal?  @db.Decimal(6, 2)
+  total_shifts_needed           Int?
+  total_working_hours_required  Decimal?  @db.Decimal(10, 2)
+  total_members                 Int?
+  total_regular_hours_available Decimal?  @db.Decimal(10, 2)
+  total_ot_hours_required       Decimal?  @db.Decimal(10, 2)
+  additional_members_required   Int?
+
+  @@index([department_id, month, year, is_active], map: "idx_schedule_master_department_id_month_year_is_active")
+  @@index([department_id, month, year], map: "idx_schedule_master_department_id_month_year")
+}
+
+model schedule_shift_log_types {
+  id          Int                   @id @default(autoincrement())
+  name        String                @unique(map: "name") @db.VarChar(50)
+  description String?               @db.VarChar(255)
+  shift_logs  schedule_shift_logs[]
+}
+
+model schedule_shift_logs {
+  id                BigInt                   @id @default(autoincrement())
+  schedule_shift_id Int
+  user_id           Int
+  latitude          Decimal?                 @db.Decimal(10, 8)
+  longitude         Decimal?                 @db.Decimal(11, 8)
+  log_type_id       Int
+  work_type_id      Int
+  log_timestamp     DateTime                 @db.DateTime(0)
+  created_by        Int?
+  remarks           String?                  @db.VarChar(255)
+  log_type          schedule_shift_log_types @relation(fields: [log_type_id], references: [id], onDelete: NoAction, map: "fk_shift_logs_to_log_types")
+  // schedule_shift    schedule_shifts          @relation(fields: [schedule_shift_id], references: [id], onDelete: Cascade, map: "fk_shift_logs_to_shifts")
+  user              users                    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_shift_logs_to_users")
+  work_type         work_types               @relation(fields: [work_type_id], references: [id], onDelete: NoAction, map: "fk_shift_logs_to_work_types")
+
+  @@index([log_type_id], map: "log_type_id_idx")
+  @@index([schedule_shift_id], map: "schedule_shift_id_idx")
+  @@index([user_id], map: "user_id_idx")
+  @@index([work_type_id], map: "work_type_id_idx")
+}
+
+model schedule_shift_summary {
+  id                 BigInt    @id @default(autoincrement())
+  schedule_master_id Int
+  department_id      Int
+  shift_type_id      Int
+  total_shifts       Int?      @default(0)
+  total_hours        Decimal?  @default(0.00) @db.Decimal(10, 2)
+  total_normal_hours Decimal?  @default(0.00) @db.Decimal(10, 2)
+  total_ot_hours     Decimal?  @default(0.00) @db.Decimal(10, 2)
+  total_employees    Int?      @default(0)
+  is_active          Boolean?  @default(true)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime? @default(now()) @db.DateTime(0)
+  updated_at         DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([schedule_master_id, shift_type_id], map: "uniq_summary")
+  @@index([department_id], map: "idx_schedule_shift_summary_department")
+  @@index([is_active], map: "idx_schedule_shift_summary_is_active")
+  @@index([schedule_master_id], map: "idx_schedule_shift_summary_schedule_master")
+  @@index([shift_type_id], map: "idx_schedule_shift_summary_shift_type")
+}
+
+model schedule_shifts {
+  id                   Int       @id @default(autoincrement())
+  schedule_master_id   Int
+  shift_type_id        Int
+  employee_id          Int
+  status_id            Int
+  shift_date           DateTime  @db.Date
+  remarks              String?   @db.Text
+  facility_id          Int?
+  is_active            Boolean?  @default(true)
+  created_at           DateTime? @default(now()) @db.Timestamp(0)
+  updated_at           DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by           Int?
+  updated_by           Int?
+  department_id        Int?
+  start_time           DateTime? @db.Time(0)
+  end_time             DateTime? @db.Time(0)
+  total_hours          Decimal?  @db.Decimal(5, 2)
+  normal_hours         Decimal?  @db.Decimal(5, 2)
+  ot_hours             Decimal?  @db.Decimal(5, 2)
+  is_overtime          Boolean?  @default(false)
+  is_replacement       Boolean?  @default(false)
+  replaced_employee_id Int?
+  actual_check_in      DateTime? @db.DateTime(0)
+  actual_check_out     DateTime? @db.DateTime(0)
+  late_minutes         Int?      @default(0)
+  early_leave_minutes  Int?      @default(0)
+  init_employee_id     Int       @default(0)
+  is_job_broadcast     Boolean?  @default(false)
+  job_apply_id         Int?
+  // give_shift_requests  give_shift_requests[]
+  // schedule_shift_logs  schedule_shift_logs[]
+  // shift_comments       shift_comments[]
+
+  @@index([schedule_master_id], map: "idx_schedule_shift_schedule_master")
+  @@index([schedule_master_id, employee_id, shift_date, is_active], map: "idx_schedule_shift_schedule_master_date_status")
+  @@index([schedule_master_id, employee_id, shift_date], map: "idx_schedule_shift_schedule_master_date")
+}
+
+model schedule_statuses {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(50)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model schedule_template_shifts {
+  id            Int       @id @default(autoincrement())
+  template_id   Int
+  shift_type_id Int
+  day_of_week   Int       @db.TinyInt
+  start_time    DateTime  @db.Time(0)
+  end_time      DateTime  @db.Time(0)
+  roles_allowed String?   @db.VarChar(255)
+  is_active     Boolean?  @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by    Int?
+  updated_by    Int?
+}
+
+model schedule_templates {
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(255)
+  description   String?   @db.Text
+  department_id Int
+  facility_id   Int
+  is_active     Boolean?  @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by    Int?
+  updated_by    Int?
+}
+
+model shift_comments {
+  id              Int           @id @default(autoincrement())
+  shift_id        Int
+  user_id         Int
+  swap_request_id Int?
+  description     String        @db.Text
+  created_at      DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?     @default(now()) @updatedAt @db.Timestamp(0)
+  swap_request    swap_request? @relation(fields: [swap_request_id], references: [id], map: "fk_shift_comments_swap")
+  // shift           schedule_shifts @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "shift_comments_ibfk_1")
+  user            users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "shift_comments_ibfk_2")
+
+  @@index([shift_id], map: "shift_id")
+  @@index([swap_request_id], map: "swap_request_id")
+  @@index([user_id], map: "user_id")
+}
+
+model shift_statuses {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(50)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model shift_type_group_tags {
+  id                Int             @id @default(autoincrement())
+  shift_type_id     Int
+  user_group_tag_id Int
+  is_active         Boolean?        @default(true)
+  created_by        Int?
+  updated_by        Int?
+  created_at        DateTime?       @default(now()) @db.DateTime(0)
+  updated_at        DateTime?       @default(now()) @updatedAt @db.DateTime(0)
+  min_count         Int             @default(0)
+  priority_level    Int             @default(1)
+  is_primary_group  Boolean         @default(false)
+  user_group_tag    user_group_tags @relation(fields: [user_group_tag_id], references: [id], onDelete: Cascade, map: "fk_shift_type_group_tags_group_tag")
+  shift_type        shift_types     @relation(fields: [shift_type_id], references: [id], onDelete: Cascade, map: "fk_shift_type_group_tags_shift_type")
+
+  @@unique([shift_type_id, user_group_tag_id], map: "unique_shift_type_group_tag")
+  @@index([is_active], map: "idx_is_active")
+  @@index([shift_type_id], map: "idx_shift_type_id")
+  @@index([user_group_tag_id], map: "idx_user_group_tag_id")
+}
+
+model shift_type_roles {
+  id                 Int         @id @default(autoincrement())
+  shift_type_id      Int
+  role_id            Int
+  is_active          Boolean?    @default(true)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime?   @default(now()) @db.DateTime(0)
+  updated_at         DateTime?   @default(now()) @updatedAt @db.DateTime(0)
+  min_count          Int?
+  max_count          Int?
+  min_count_weekday  Int?
+  max_count_weekday  Int?
+  min_count_weekend  Int?
+  max_count_weekend  Int?
+  min_count_saturday Int?
+  max_count_saturday Int?
+  min_count_sunday   Int?
+  max_count_sunday   Int?
+  role               roles       @relation(fields: [role_id], references: [id], onDelete: Cascade, map: "fk_shift_type_roles_role")
+  shift_type         shift_types @relation(fields: [shift_type_id], references: [id], onDelete: Cascade, map: "fk_shift_type_roles_shift_type")
+
+  @@unique([shift_type_id, role_id], map: "unique_shift_type_role")
+  @@index([is_active], map: "idx_is_active")
+  @@index([role_id], map: "idx_role_id")
+  @@index([shift_type_id], map: "idx_shift_type_id")
+}
+
+model shift_types {
+  id                                        Int                                              @id @default(autoincrement())
+  name                                      String                                           @db.VarChar(255)
+  start_time                                DateTime                                         @db.Time(0)
+  end_time                                  DateTime                                         @db.Time(0)
+  roles_allowed                             String                                           @db.VarChar(255)
+  department_id                             Int?
+  facility_id                               Int?
+  is_active                                 Boolean?                                         @default(true)
+  created_by                                Int?
+  updated_by                                Int?
+  created_at                                DateTime?                                        @db.DateTime(0)
+  updated_at                                DateTime?                                        @db.DateTime(0)
+  short_name                                String?                                          @db.VarChar(50)
+  color_code                                String?                                          @db.VarChar(10)
+  total_hours                               Decimal?                                         @db.Decimal(5, 2)
+  normal_hours                              Decimal?                                         @db.Decimal(5, 2)
+  ot_hours                                  Decimal?                                         @db.Decimal(5, 2)
+  count_as_fte                              Boolean?                                         @default(true)
+  count_as_working_hour                     Boolean?                                         @default(true)
+  min_staff_weekday                         Int?
+  max_staff_weekday                         Int?
+  min_staff_weekend                         Int?
+  max_staff_weekend                         Int?
+  max_staff_saturday                        Int?
+  max_staff_sunday                          Int?
+  use_total_max_weekday                     Boolean                                          @default(false)
+  use_total_max_saturday                    Boolean                                          @default(false)
+  use_total_max_sunday                      Boolean                                          @default(false)
+  required_senior_count                     Int?                                             @default(0)
+  is_manual                                 Boolean?                                         @default(false)
+  is_default                                Boolean?                                         @default(false)
+  apply_holiday_in_auto_assign              Boolean                                          @default(false)
+  productivity_records                      productivity_records[]
+  request_shifts                            request_shifts[]
+  shift_type_group_tags                     shift_type_group_tags[]
+  shift_type_roles                          shift_type_roles[]
+  scheduling_rule_shift_pairings_primary    scheduling_rule_shift_pairings[]                 @relation("PrimaryShiftPairing")
+  scheduling_rule_shift_pairings_paired     scheduling_rule_shift_pairings[]                 @relation("PairedShiftPairing")
+  scheduling_rule_shift_exclusions_primary  scheduling_rule_shift_exclusions[]               @relation("PrimaryShiftExclusion")
+  scheduling_rule_shift_exclusions_excluded scheduling_rule_shift_exclusions[]               @relation("ExcludedShiftExclusion")
+  scheduling_rule_blocked_preceding         scheduling_rule_blocked_consecutives[]           @relation("PrecedingBlockedShift")
+  scheduling_rule_blocked_blocked           scheduling_rule_blocked_consecutives[]           @relation("BlockedShift")
+  scheduling_rule_staff_shift_preferences   scheduling_rule_staff_shift_preferences[]
+  scheduling_rule_required_staff_shifts     scheduling_rule_required_staff_shifts[]
+  schedulingRuleShiftCountLimits            scheduling_rule_shift_count_limits[]
+  schedulingRuleConsecutiveShiftLimitGroups scheduling_rule_consecutive_shift_limit_groups[]
+
+  @@index([department_id, is_active], map: "idx_department_id")
+  @@index([department_id, short_name], map: "idx_short_name")
+  @@index([department_id, name], map: "idx_name")
+}
+
+model sub_category_master {
+  id          Int       @id @default(autoincrement())
+  category_id Int
+  code        String    @db.VarChar(50)
+  name_th     String    @db.VarChar(255)
+  name_en     String    @db.VarChar(255)
+  description String?   @db.Text
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([category_id, code], map: "uq_cat_code")
+  @@index([is_active], map: "idx_active")
+  @@index([category_id], map: "idx_cat")
+}
+
+model subdistricts {
+  id                  Int      @id @default(autoincrement())
+  province_code       Int
+  district_code       Int
+  subdistrict_code    Int      @unique(map: "subdistrict_code")
+  subdistrict_name_th String   @db.VarChar(255)
+  subdistrict_name_en String   @db.VarChar(255)
+  postal_code         String   @db.VarChar(10)
+  created_by          Int?
+  updated_by          Int?
+  created_at          DateTime @default(now()) @db.DateTime(0)
+  updated_at          DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  @@index([subdistrict_code], map: "idx_subdistrict_code")
+  @@index([district_code], map: "idx_district_code")
+}
+
+model swap_request {
+  id                    Int                     @id @default(autoincrement())
+  user_id               Int
+  shift_id              Int
+  month                 Int                     @db.TinyInt
+  year                  Int                     @db.SmallInt
+  schedule_master_id    Int
+  status                String                  @db.VarChar(255)
+  approve_user_id       Int?                    @default(0)
+  approve_date          DateTime?               @db.Date
+  remark                String                  @db.VarChar(255)
+  created_by            Int?
+  updated_by            Int?
+  created_at            DateTime?               @default(now()) @db.DateTime(0)
+  updated_at            DateTime?               @default(now()) @updatedAt @db.DateTime(0)
+  target_user_id        Int                     @default(0)
+  swap_shift_id         Int                     @default(0)
+  target_approve_status SwapTargetApproveStatus @default(PENDING)
+  target_approve_date   DateTime?               @db.DateTime(0)
+  is_deleted            Boolean                 @default(false)
+  shift_comments        shift_comments[]
+}
+
+model user_certifications {
+  id                      Int                      @id @default(autoincrement())
+  user_id                 Int
+  certification_id        Int
+  institution_id          Int?
+  document_url            String?                  @db.VarChar(1024)
+  start_date              DateTime?                @db.Date
+  graduate_date           DateTime?                @db.Date
+  is_active               Boolean?                 @default(true)
+  created_by              Int?
+  updated_by              Int?
+  created_at              DateTime?                @db.DateTime(0)
+  updated_at              DateTime?                @db.DateTime(0)
+  document_id             Int?
+  certification_type      specialty_type?
+  custom_institution_name String?                  @db.VarChar(500)
+  user_sub_certifications user_sub_certifications[]
+}
+
+model user_sub_certifications {
+  id                      Int                 @id @default(autoincrement())
+  user_id                 Int
+  user_certification_id   Int
+  sub_certification_id    Int
+  institution_id          Int?
+  custom_institution_name String?             @db.VarChar(500)
+  document_id             Int?
+  is_active               Boolean             @default(true)
+  created_by              Int?
+  updated_by              Int?
+  created_at              DateTime            @default(now()) @db.DateTime(0)
+  updated_at              DateTime            @default(now()) @updatedAt @db.DateTime(0)
+
+  user_certification      user_certifications @relation(fields: [user_certification_id], references: [id], onDelete: Cascade, map: "fk_usc_user_cert")
+
+  @@index([user_id, is_active, created_at], map: "idx_usc_user_active")
+  @@index([user_certification_id], map: "idx_usc_parent")
+}
+
+model user_content_interactions {
+  id               Int             @id @default(autoincrement()) @db.UnsignedInt
+  user_id          Int             @db.UnsignedInt
+  content_id       Int             @db.UnsignedInt
+  content_type     ContentType
+  interaction_type InteractionType
+  created_at       DateTime        @default(now()) @db.DateTime(0)
+  updated_at       DateTime        @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([user_id, content_id, content_type], map: "user_content_interaction_unique")
+}
+
+model user_content_views {
+  id           Int         @id @default(autoincrement()) @db.UnsignedInt
+  user_id      Int         @db.UnsignedInt
+  content_id   Int         @db.UnsignedInt
+  content_type ContentType
+  created_at   DateTime    @default(now()) @db.DateTime(0)
+  updated_at   DateTime    @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([user_id, content_id, content_type], map: "user_content_view_unique")
+}
+
+model user_daily_checkins {
+  id            Int       @id @default(autoincrement())
+  user_id       Int
+  check_in_date DateTime  @db.Date
+  check_in_time DateTime? @default(now()) @db.Timestamp(0)
+  points_earned Int?      @default(10)
+  is_bonus_day  Boolean?  @default(false)
+  bonus_points  Int?      @default(0)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  user          users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_daily_checkins_ibfk_1")
+
+  @@unique([user_id, check_in_date], map: "unique_user_date")
+}
+
+model user_devices {
+  id             BigInt     @id @default(autoincrement())
+  user_id        BigInt
+  device_id      String     @db.VarChar(255)
+  device_type    DeviceType
+  os_name        String?    @db.VarChar(100)
+  os_version     String?    @db.VarChar(100)
+  app_version    String?    @db.VarChar(100)
+  device_model   String?    @db.VarChar(255)
+  push_token     String?    @db.VarChar(512)
+  is_active      Boolean?   @default(true)
+  trusted_device Boolean?   @default(false)
+  last_login_at  DateTime?  @db.DateTime(0)
+  ip_address     String?    @db.VarChar(45)
+  created_by     BigInt?
+  updated_by     BigInt?
+  created_at     DateTime?  @default(now()) @db.DateTime(0)
+  updated_at     DateTime?  @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([user_id, device_id], map: "unique_user_device")
+}
+
+model user_documents {
+  id                   BigInt              @id @default(autoincrement())
+  user_id              Int
+  document_type_id     Int
+  document_sub_type_id Int?
+  file_url             String              @db.VarChar(1024)
+  document_number      String?             @db.VarChar(100)
+  issue_date           DateTime?           @db.Date
+  expiry_date          DateTime?           @db.Date
+  status               UserDocumentStatus  @default(PENDING)
+  rejection_reason     String?             @db.Text
+  uploaded_at          DateTime            @default(now()) @db.DateTime(0)
+  verified_at          DateTime?           @db.DateTime(0)
+  is_deleted           Boolean             @default(false)
+  document_type        document_types      @relation(fields: [document_type_id], references: [id], onDelete: NoAction, map: "fk_userdocs_to_doctypes")
+  document_sub_type    document_sub_types? @relation(fields: [document_sub_type_id], references: [id], map: "fk_userdocs_to_sub_types")
+  user                 users               @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_userdocs_to_users")
+
+  @@index([document_sub_type_id], map: "fk_userdocs_to_sub_types")
+  @@index([document_type_id], map: "idx_document_type_id")
+  @@index([user_id], map: "idx_user_id")
+}
+
+model user_duty {
+  id                 BigInt    @id @default(autoincrement())
+  user_id            Int
+  duty_date          DateTime  @db.Date
+  duty_type_id       Int
+  reference_id       BigInt?
+  shift_type_id      Int?
+  start_time         DateTime? @db.Time(0)
+  end_time           DateTime? @db.Time(0)
+  total_hours        Decimal?  @db.Decimal(6, 2)
+  status             String?   @db.VarChar(50)
+  department_id      Int?
+  schedule_master_id Int?
+  is_active          Boolean?  @default(true)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime? @default(now()) @db.DateTime(0)
+  updated_at         DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@index([created_by], map: "idx_user_duty_created_by")
+  @@index([user_id, duty_date], map: "idx_user_duty_date")
+  @@index([department_id], map: "idx_user_duty_department")
+  @@index([is_active], map: "idx_user_duty_is_active")
+  @@index([reference_id], map: "idx_user_duty_reference")
+  @@index([schedule_master_id], map: "idx_user_duty_schedule")
+  @@index([shift_type_id], map: "idx_user_duty_shift_type")
+  @@index([status], map: "idx_user_duty_status")
+  @@index([duty_type_id], map: "idx_user_duty_type")
+  @@index([updated_by], map: "idx_user_duty_updated_by")
+}
+
+model user_employments {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  department_id    Int
+  facility_id      Int
+  position_id      String?   @db.VarChar(255)
+  sequence         Int?
+  start_date       DateTime? @db.Date
+  end_date         DateTime? @db.Date
+  is_active        Boolean?  @default(true)
+  is_part_time     Boolean?
+  is_job_applicant Boolean?  @default(false)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime? @db.DateTime(0)
+  updated_at       DateTime? @db.DateTime(0)
+
+  @@index([user_id, is_active, is_part_time, is_job_applicant], map: "idx_user_employment")
+  @@index([user_id, is_active, department_id], map: "idx_user_employment_department")
+  @@index([user_id], map: "idx_user_employment_user")
+}
+
+model user_event_stamps {
+  id             BigInt    @id @default(autoincrement())
+  booth_event_id BigInt
+  user_id        Int
+  stamp_code     String    @db.VarChar(100)
+  scanned_at     DateTime  @db.DateTime(0)
+  is_redeemed    Boolean   @default(false)
+  redeemed_at    DateTime? @db.DateTime(0)
+}
+
+model user_experience {
+  id                     Int       @id @default(autoincrement())
+  user_id                Int
+  experience_years       Int?      @default(0)
+  experience_months      Int?      @default(0)
+  occupation_place       String    @db.VarChar(255)
+  created_at             DateTime? @default(now()) @db.DateTime(0)
+  updated_at             DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  occupation_name        String?   @db.VarChar(255)
+  category_master_id     Int?
+  sub_category_master_id Int?
+  user                   users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_experience_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model user_group_tag_members {
+  id                Int             @id @default(autoincrement())
+  user_group_tag_id Int
+  user_id           Int
+  is_active         Boolean?        @default(true)
+  created_by        Int?
+  updated_by        Int?
+  created_at        DateTime?       @default(now()) @db.DateTime(0)
+  updated_at        DateTime?       @default(now()) @updatedAt @db.DateTime(0)
+  user_group_tag    user_group_tags @relation(fields: [user_group_tag_id], references: [id], onDelete: Cascade, map: "fk_user_group_tag_members_tag")
+  user              users           @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_group_tag_members_user")
+
+  @@unique([user_group_tag_id, user_id], map: "unique_user_group_tag_member")
+  @@index([is_active], map: "idx_is_active")
+  @@index([user_group_tag_id], map: "idx_user_group_tag_id")
+  @@index([user_id], map: "idx_user_id")
+}
+
+model user_group_tags {
+  id                    Int                      @id @default(autoincrement())
+  name                  String                   @db.VarChar(255)
+  description           String?                  @db.Text
+  department_id         Int
+  role_id               Int?
+  color_code            String?                  @db.VarChar(10)
+  is_active             Boolean?                 @default(true)
+  created_by            Int?
+  updated_by            Int?
+  created_at            DateTime?                @default(now()) @db.DateTime(0)
+  updated_at            DateTime?                @default(now()) @updatedAt @db.DateTime(0)
+  seq                   Int?
+  shift_type_group_tags shift_type_group_tags[]
+  members               user_group_tag_members[]
+  department            departments              @relation(fields: [department_id], references: [id], onDelete: Cascade, map: "fk_user_group_tags_department")
+  role                  roles?                   @relation(fields: [role_id], references: [id], map: "fk_user_group_tags_role_id")
+
+  @@index([department_id], map: "idx_department_id")
+  @@index([is_active], map: "idx_is_active")
+  @@index([name, department_id], map: "idx_name_department")
+  @@index([department_id, seq], map: "idx_user_group_tags_department_seq")
+  @@index([role_id], map: "idx_user_group_tags_role_id")
+}
+
+model user_health_region {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  health_region_id Int
+  role_id          String    @default("regional_health_director") @db.VarChar(60)
+  is_primary       Boolean?  @default(true)
+  appointment_no   String?   @db.VarChar(100)
+  appointment_date DateTime? @db.Date
+  effective_start  DateTime  @db.Date
+  effective_end    DateTime? @db.Date
+  notes            String?   @db.Text
+  is_active        Boolean?  @default(true)
+  created_by       Int?
+  updated_by       Int?
+  created_at       DateTime? @default(now()) @db.DateTime(0)
+  updated_at       DateTime? @default(now()) @updatedAt @db.DateTime(0)
+
+  @@unique([health_region_id, user_id, role_id, effective_start], map: "uq_hr_user_role_start")
+  @@index([is_active], map: "idx_active")
+  @@index([effective_start, effective_end], map: "idx_effective")
+  @@index([health_region_id], map: "idx_region")
+  @@index([role_id], map: "idx_role")
+  @@index([user_id], map: "idx_user")
+}
+
+model user_logs {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  action       String    @db.VarChar(255)
+  changes      String?   @db.Text
+  performed_by Int
+  performed_at DateTime? @default(now()) @db.Timestamp(0)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  created_by   Int?
+  updated_by   Int?
+}
+
+model user_notification_preferences {
+  id             BigInt                @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  user_id        Int
+  preference_key String                @db.VarChar(255)
+  key_type_id    Int?
+  is_enabled     Boolean               @default(true)
+  created_at     DateTime?             @default(now()) @db.Timestamp(0)
+  updated_at     DateTime?             @default(now()) @db.Timestamp(0)
+  key_type       preference_key_types? @relation(fields: [key_type_id], references: [id], map: "fk_pref_to_key_types")
+  user           users                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_notification_preferences_ibfk_1")
+
+  @@unique([user_id, preference_key], map: "uq_user_preference")
+  @@index([key_type_id], map: "idx_key_type_id")
+  @@index([user_id, preference_key], map: "idx_user_pref")
+}
+
+model user_notifications {
+  id              BigInt                      @id @default(autoincrement())
+  notification_id BigInt
+  user_id         BigInt
+  push_status     UserNotificationPushStatus? @default(pending)
+  push_token      String?                     @db.VarChar(512)
+  is_in_app       Boolean?                    @default(true)
+  is_read         Boolean?                    @default(false)
+  read_at         DateTime?                   @db.DateTime(0)
+  sent_at         DateTime?                   @db.DateTime(0)
+  created_by      BigInt?
+  updated_by      BigInt?
+  created_at      DateTime?                   @db.DateTime(0)
+  updated_at      DateTime?                   @db.DateTime(0)
+
+  @@index([user_id, is_read], map: "idx_user_read")
+}
+
+model user_points {
+  id                 Int       @id @default(autoincrement())
+  user_id            Int       @unique(map: "user_id")
+  total_points       Int?      @default(0)
+  total_bonus_points Int?      @default(0)
+  current_streak     Int?      @default(0)
+  max_streak         Int?      @default(0)
+  last_check_in      DateTime? @db.Date
+  updated_at         DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  user               users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_points_ibfk_1")
+}
+
+model user_profile_completeness {
+  id                    Int       @id @default(autoincrement())
+  user_id               Int
+  completeness_percent  Decimal   @default(0.00) @db.Decimal(5, 2)
+  basic_info_percent    Decimal?  @default(0.00) @db.Decimal(5, 2)
+  contact_info_percent  Decimal?  @default(0.00) @db.Decimal(5, 2)
+  identity_info_percent Decimal?  @default(0.00) @db.Decimal(5, 2)
+  security_info_percent Decimal?  @default(0.00) @db.Decimal(5, 2)
+  last_calculated       DateTime? @default(now()) @db.DateTime(0)
+  created_by            Int?
+  updated_by            Int?
+  created_at            DateTime  @default(now()) @db.DateTime(0)
+  updated_at            DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  user                  users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_profile_completeness_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model user_roles {
+  id          Int       @id @default(autoincrement())
+  user_id     Int
+  role_id     Int
+  is_active   Boolean?  @default(true)
+  assigned_at DateTime? @db.DateTime(0)
+
+  @@index([user_id], map: "user_id")
+  @@index([user_id, role_id], map: "idx_user_role")
+}
+
+model user_status {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique(map: "name") @db.VarChar(50)
+  description String?  @db.VarChar(255)
+  is_active   Boolean? @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime @db.DateTime(0)
+  updated_at  DateTime @db.DateTime(0)
+}
+
+model users {
+  id                                   Int                                        @id @default(autoincrement())
+  keycloak_user_id                     String?                                    @db.VarChar(36)
+  username                             String                                     @db.VarChar(50)
+  username_encrypted                   String?                                    @db.Text
+  password                             String                                     @db.VarChar(500)
+  need_password_reset                  Boolean?                                   @default(false)
+  email                                String?                                    @db.VarChar(255)
+  is_verified_email                    Boolean?                                   @default(false)
+  verified_email_date                  DateTime?                                  @db.Date
+  first_name                           String?                                    @db.VarChar(255)
+  last_name                            String?                                    @db.VarChar(255)
+  country_code                         String?                                    @db.VarChar(10)
+  phone_number                         String?                                    @db.VarChar(50)
+  is_verified_phone                    Boolean?                                   @default(false)
+  verified_phone_date                  DateTime?                                  @db.Date
+  date_of_birth                        DateTime?                                  @db.Date
+  gender_id                            Int?                                       @default(0)
+  gender                               String?                                    @db.VarChar(20)
+  profile_picture                      String?                                    @db.VarChar(1024)
+  id_card_number                       String?                                    @db.VarChar(50)
+  id_card_url                          String?                                    @db.VarChar(1024)
+  passport_number                      String?                                    @db.VarChar(50)
+  passport_url                         String?                                    @db.VarChar(1024)
+  two_factor_enabled                   Boolean?                                   @default(false)
+  failed_login_attempts                Int?                                       @default(0)
+  last_password_change                 DateTime?                                  @db.DateTime(0)
+  reset_password_token                 String?                                    @db.VarChar(20)
+  reset_password_ref                   String?                                    @db.VarChar(20)
+  reset_password_expires               DateTime?                                  @db.DateTime(0)
+  status_id                            Int?                                       @default(0)
+  role_id                              Int?
+  status                               String?                                    @default("active") @db.VarChar(50)
+  status_reason                        String?                                    @db.VarChar(255)
+  signup_date                          DateTime?                                  @db.DateTime(0)
+  referral_code                        String?                                    @db.VarChar(50)
+  preferences                          Json?
+  last_login                           DateTime?                                  @db.DateTime(0)
+  created_by                           Int?
+  updated_by                           Int?
+  created_at                           DateTime                                   @db.DateTime(0)
+  updated_at                           DateTime                                   @db.DateTime(0)
+  ID_line                              String?                                    @db.VarChar(100)
+  nickname                             String?                                    @db.VarChar(100)
+  occupation_document_url              String?                                    @db.VarChar(1024)
+  occupation_expired                   DateTime?                                  @db.Date
+  occupation_number                    String?                                    @db.VarChar(50)
+  occupation_passed_unit               String?                                    @db.VarChar(100)
+  verification_token                   String?                                    @db.VarChar(20)
+  verification_ref                     String?                                    @db.VarChar(20)
+  verification_expires                 DateTime?                                  @db.DateTime(0)
+  email_encrypted                      String?                                    @db.Text
+  first_name_encrypted                 String?                                    @db.Text
+  last_name_encrypted                  String?                                    @db.Text
+  phone_number_encrypted               String?                                    @db.Text
+  date_of_birth_encrypted              String?                                    @db.Text
+  id_card_number_encrypted             String?                                    @db.Text
+  passport_number_encrypted            String?                                    @db.Text
+  occupation_number_encrypted          String?                                    @db.Text
+  ID_line_encrypted                    String?                                    @db.Text
+  email_hash                           String?                                    @db.VarChar(64)
+  username_hash                        String?                                    @db.VarChar(64)
+  phone_number_hash                    String?                                    @db.VarChar(64)
+  id_card_number_hash                  String?                                    @db.VarChar(64)
+  is_encrypted                         Boolean?                                   @default(false)
+  encryption_version                   String?                                    @default("v1.0") @db.VarChar(10)
+  data_retention_date                  DateTime?                                  @db.Date
+  consent_given_date                   DateTime?                                  @db.Date
+  consent_withdrawn_date               DateTime?                                  @db.Date
+  encryption_migrated_at               DateTime?                                  @db.Timestamp(0)
+  privacy_policy_version               String?                                    @default("v1.0") @db.VarChar(10)
+  applicant_reviews_as_reviewer        applicant_reviews[]                        @relation("ReviewerRelation")
+  audit_logs                           audit_logs[]
+  auspicious_colors_created            auspicious_colors[]                        @relation("AuspiciousColorCreator")
+  auspicious_colors_updated            auspicious_colors[]                        @relation("AuspiciousColorUpdater")
+  checkIn_reward_redemptions           checkIn_reward_redemptions[]
+  check_in_logs                        check_in_logs[]
+  department_certifications_created    department_certifications[]                @relation("DeptCertCreator")
+  facilities_created                   facilities[]                               @relation("FacilityCreator")
+  facilities_updated                   facilities[]                               @relation("FacilityUpdater")
+  give_shift_requests_user             give_shift_requests[]                      @relation("GiveShiftUser")
+  give_shift_requests_target           give_shift_requests[]                      @relation("GiveShiftTarget")
+  notification_recipient_events        notification_recipient_events[]
+  productivity_records_created         productivity_records[]                     @relation("ProductivityCreator")
+  productivity_records_updated         productivity_records[]                     @relation("ProductivityUpdater")
+  productivity_records_logs            productivity_records_logs[]                @relation("ProductivityLogAction")
+  refresh_tokens                       refresh_tokens[]
+  request_shifts_approver              request_shifts[]                           @relation("RequestShiftApprover")
+  request_shifts_user                  request_shifts[]                           @relation("RequestShiftUser")
+  schedule_shift_logs                  schedule_shift_logs[]
+  shift_comments                       shift_comments[]
+  user_daily_checkins                  user_daily_checkins[]
+  user_documents                       user_documents[]
+  user_experience                      user_experience[]
+  user_group_tag_members               user_group_tag_members[]
+  user_notification_preferences        user_notification_preferences[]
+  user_points                          user_points?
+  user_profile_completeness            user_profile_completeness[]
+  work_areas                           work_areas[]
+  schedulingRuleStaffConflictMembers   scheduling_rule_staff_conflict_members[]
+  schedulingRuleStaffShiftPreferences  scheduling_rule_staff_shift_preferences[]
+  schedulingRuleRequiredStaffMembers   scheduling_rule_required_staff_members[]
+  matched_jobs                         job_matched_users[]
+  autoMatchUserOffers                  job_auto_match_user_offers[]
+  schedulingRuleShiftCountLimits       scheduling_rule_shift_count_limits[]
+  schedulingRuleExceptionPairs         scheduling_rule_exception_pairs[]
+  schedulingRuleConsecutiveShiftLimits scheduling_rule_consecutive_shift_limits[]
+  user_product_access                  user_product_access[]
+  diagnosis_logs                       diagnosis_logs[]
+  auto_schedule_no_solution_logs       auto_schedule_no_solution_logs[]
+
+  @@index([consent_given_date], map: "idx_consent_given")
+  @@index([consent_withdrawn_date], map: "idx_consent_withdrawn")
+  @@index([data_retention_date], map: "idx_data_retention")
+  @@index([email_hash], map: "idx_email_hash")
+  @@index([encryption_migrated_at], map: "idx_encryption_migrated_at")
+  @@index([encryption_version], map: "idx_encryption_version")
+  @@index([id_card_number_hash], map: "idx_id_card_hash")
+  @@index([is_encrypted], map: "idx_is_encrypted")
+  @@index([phone_number_hash], map: "idx_phone_hash")
+  @@index([privacy_policy_version], map: "idx_privacy_policy_version")
+  @@index([username_hash], map: "idx_users_username_hash")
+  @@index([username], map: "idx_users_username")
+  @@index([username, status_id], map: "idx_users_username_status")
+  @@index([status_id], map: "idx_users_status")
+  @@index([keycloak_user_id], map: "keycloak_user_id")
+}
+
+model work_areas {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  province_code    Int
+  district         String    @db.VarChar(400)
+  created_at       DateTime? @default(now()) @db.DateTime(0)
+  updated_at       DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  job_type_id      String?   @db.VarChar(400)
+  facility_type_id String?   @db.VarChar(400)
+  province         provinces @relation(fields: [province_code], references: [id], onDelete: NoAction, map: "fk_work_areas_to_provinces")
+  user             users     @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_work_areas_to_users")
+
+  @@index([province_code], map: "fk_work_areas_to_provinces")
+  @@index([user_id], map: "idx_user_id")
+}
+
+model work_types {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique(map: "name") @db.VarChar(50)
+  description         String?               @db.VarChar(255)
+  schedule_shift_logs schedule_shift_logs[]
+}
+
+model audit_logs {
+  id             Int       @id @default(autoincrement())
+  user_id        Int?
+  action         String    @db.VarChar(100)
+  table_name     String    @db.VarChar(100)
+  record_id      Int?
+  old_values     Json?
+  new_values     Json?
+  changes        Json?
+  ip_address     String?   @db.VarChar(45)
+  user_agent     String?   @db.Text
+  request_url    String?   @db.VarChar(500)
+  request_method String?   @db.VarChar(10)
+  status_code    Int?
+  session_id     String?   @db.VarChar(255)
+  transaction_id String?   @db.VarChar(255)
+  auto_audit     Boolean?  @default(true)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  users          users?    @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "audit_logs_ibfk_1")
+
+  @@index([action], map: "idx_action")
+  @@index([auto_audit], map: "idx_auto_audit")
+  @@index([created_at], map: "idx_created_at")
+  @@index([record_id], map: "idx_record_id")
+  @@index([session_id], map: "idx_session_id")
+  @@index([table_name], map: "idx_table_name")
+  @@index([user_id], map: "idx_user_id")
+}
+
+model department_role_min_hours {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  role_id       Int
+  min_hours     Int
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamp(0)
+  updated_at    DateTime @default(now()) @db.Timestamp(0)
+  updated_by    Int?
+  created_by    Int?
+
+  role       roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  department departments @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([department_id], map: "idx_department_role_min_hours_department")
+  @@index([role_id], map: "idx_department_role_min_hours_role")
+}
+
+enum notification_batch_status {
+  pending
+  processing
+  sent
+  failed
+}
+
+model notification_batches {
+  id                BigInt                    @id @default(autoincrement())
+  notification_id   BigInt
+  batch_no          Int
+  criteria_snapshot Json
+  start_id          BigInt
+  end_id            BigInt
+  status            notification_batch_status @default(pending)
+  attempt_count     Int
+  last_error        String?
+  created_at        DateTime                  @default(now())
+  updated_at        DateTime                  @updatedAt
+
+  @@unique([notification_id, batch_no])
+  @@index([notification_id])
+  @@index([status])
+}
+
+enum job_batch_status {
+  pending
+  processing
+  completed
+  failed
+}
+
+model job_batches {
+  id                BigInt           @id @default(autoincrement())
+  job_id            BigInt
+  batch_no          Int
+  publish_group     JobPublishGroup
+  criteria_snapshot Json
+  start_id          BigInt
+  end_id            BigInt
+  status            job_batch_status @default(pending)
+  attempt_count     Int
+  last_error        String?
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  correlation_id    String?          @db.VarChar(100)
+
+  @@index([job_id, batch_no, correlation_id])
+  @@index([job_id])
+  @@index([status])
+}
+
+// ============================================
+// SCHEDULING RULES - MASTER TYPES
+// ============================================
+model scheduling_rule_types {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique @db.VarChar(50)
+  name_th         String   @db.VarChar(100)
+  name_en         String   @db.VarChar(100)
+  description     String?  @db.Text
+  default_enabled Boolean  @default(true)
+  sort_order      Int      @default(0)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.DateTime(0)
+  updated_at      DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  configs scheduling_rule_configs[]
+
+  @@index([code])
+  @@index([is_active, sort_order])
+}
+
+// ============================================
+// SCHEDULING RULES - DEPARTMENT CONFIG (enable/disable)
+// ============================================
+model scheduling_rule_configs {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  rule_type_id  Int
+  is_enabled    Boolean  @default(true)
+  priority      Int      @default(1)
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments           @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  rule_type  scheduling_rule_types @relation(fields: [rule_type_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id, rule_type_id])
+  @@index([department_id, is_active])
+  @@index([rule_type_id])
+}
+
+// ============================================
+// RULE 1: MINIMUM WORKING HOURS
+// ============================================
+model scheduling_rule_min_working_hours {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  role_id       Int
+  min_hours     Decimal  @db.Decimal(5, 2)
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  role       roles       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id, role_id])
+  @@index([department_id, is_active])
+  @@index([role_id])
+}
+
+// ============================================
+// RULE 2: MAXIMUM CONSECUTIVE WORKING HOURS
+// ============================================
+model scheduling_rule_max_consecutive_hours {
+  id                    Int      @id @default(autoincrement())
+  department_id         Int
+  max_consecutive_hours Decimal  @db.Decimal(5, 2)
+  is_active             Boolean  @default(true)
+  created_by            Int?
+  updated_by            Int?
+  created_at            DateTime @default(now()) @db.DateTime(0)
+  updated_at            DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id])
+  @@index([department_id, is_active])
+}
+
+// ============================================
+// RULE 3: STAFF CONFLICT GROUPS
+// ============================================
+model scheduling_rule_staff_conflict_groups {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  group_name    String   @db.VarChar(100)
+  description   String?  @db.Text
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments                              @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  members    scheduling_rule_staff_conflict_members[]
+
+  @@index([department_id, is_active])
+}
+
+model scheduling_rule_staff_conflict_members {
+  id                Int      @id @default(autoincrement())
+  conflict_group_id Int
+  user_id           Int
+  is_active         Boolean  @default(true)
+  created_by        Int?
+  updated_by        Int?
+  created_at        DateTime @default(now()) @db.DateTime(0)
+  updated_at        DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  conflict_group scheduling_rule_staff_conflict_groups @relation(fields: [conflict_group_id], references: [id], onDelete: Cascade)
+  user           users                                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([conflict_group_id, user_id])
+  @@index([conflict_group_id])
+  @@index([user_id])
+}
+
+// ============================================
+// RULE 4: SHIFT PAIRING RULES
+// ============================================
+model scheduling_rule_shift_pairings {
+  id                    Int      @id @default(autoincrement())
+  department_id         Int
+  primary_shift_type_id Int
+  paired_shift_type_id  Int
+  is_active             Boolean  @default(true)
+  created_by            Int?
+  updated_by            Int?
+  created_at            DateTime @default(now()) @db.DateTime(0)
+  updated_at            DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department         departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  primary_shift_type shift_types @relation("PrimaryShiftPairing", fields: [primary_shift_type_id], references: [id], onDelete: Cascade)
+  paired_shift_type  shift_types @relation("PairedShiftPairing", fields: [paired_shift_type_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id, primary_shift_type_id, paired_shift_type_id])
+  @@index([department_id, is_active])
+  @@index([primary_shift_type_id])
+  @@index([paired_shift_type_id])
+}
+
+// ============================================
+// RULE 4B: SHIFT EXCLUSION RULES
+// ============================================
+model scheduling_rule_shift_exclusions {
+  id                     Int      @id @default(autoincrement())
+  department_id          Int
+  primary_shift_type_id  Int
+  excluded_shift_type_id Int
+  is_active              Boolean  @default(true)
+  created_by             Int?
+  updated_by             Int?
+  created_at             DateTime @default(now()) @db.DateTime(0)
+  updated_at             DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department          departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  primary_shift_type  shift_types @relation("PrimaryShiftExclusion", fields: [primary_shift_type_id], references: [id], onDelete: Cascade)
+  excluded_shift_type shift_types @relation("ExcludedShiftExclusion", fields: [excluded_shift_type_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id, primary_shift_type_id, excluded_shift_type_id])
+  @@index([department_id, is_active])
+  @@index([primary_shift_type_id])
+  @@index([excluded_shift_type_id])
+}
+
+// ============================================
+// RULE 5: BLOCKED CONSECUTIVE SHIFTS
+// ============================================
+model scheduling_rule_blocked_consecutives {
+  id                      Int      @id @default(autoincrement())
+  department_id           Int
+  preceding_shift_type_id Int
+  blocked_shift_type_id   Int
+  is_active               Boolean  @default(true)
+  created_by              Int?
+  updated_by              Int?
+  created_at              DateTime @default(now()) @db.DateTime(0)
+  updated_at              DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department           departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  preceding_shift_type shift_types @relation("PrecedingBlockedShift", fields: [preceding_shift_type_id], references: [id], onDelete: Cascade)
+  blocked_shift_type   shift_types @relation("BlockedShift", fields: [blocked_shift_type_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id, preceding_shift_type_id, blocked_shift_type_id])
+  @@index([department_id, is_active])
+  @@index([preceding_shift_type_id])
+  @@index([blocked_shift_type_id])
+}
+
+// ============================================
+// RULE 6: STAFF SHIFT PREFERENCES
+// ============================================
+model scheduling_rule_staff_shift_preferences {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  user_id       Int
+  shift_type_id Int
+  weight        Int      @default(1)
+  reason        String?  @db.VarChar(255)
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  user       users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  shift_type shift_types @relation(fields: [shift_type_id], references: [id], onDelete: Cascade)
+
+  @@index([department_id, user_id, is_active])
+  @@index([department_id, is_active])
+  @@index([user_id, is_active])
+  @@index([shift_type_id])
+}
+
+// ============================================
+// RULE 7: REQUIRED STAFF FOR SHIFTS (NEW)
+// ============================================
+model scheduling_rule_required_staff_shifts {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  shift_type_id Int
+  name          String?  @db.VarChar(100)
+  description   String?  @db.Text
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments                              @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  shift_type shift_types                              @relation(fields: [shift_type_id], references: [id], onDelete: Cascade)
+  members    scheduling_rule_required_staff_members[]
+
+  @@unique([department_id, shift_type_id])
+  @@index([department_id, is_active])
+  @@index([shift_type_id])
+}
+
+model scheduling_rule_required_staff_members {
+  id                      Int      @id @default(autoincrement())
+  required_staff_shift_id Int
+  user_id                 Int
+  is_active               Boolean  @default(true)
+  created_by              Int?
+  updated_by              Int?
+  created_at              DateTime @default(now()) @db.DateTime(0)
+  updated_at              DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  required_staff_shift scheduling_rule_required_staff_shifts @relation(fields: [required_staff_shift_id], references: [id], onDelete: Cascade)
+  user                 users                                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([required_staff_shift_id, user_id])
+  @@index([required_staff_shift_id])
+  @@index([user_id])
+}
+
+// ============================================
+// RULE 9: SHIFT COUNT LIMITS
+// ============================================
+model scheduling_rule_shift_count_limits {
+  id            Int      @id @default(autoincrement())
+  facility_id   Int
+  department_id Int
+  user_id       Int
+  shift_type_id Int
+  min_per_month Int      @default(0)
+  max_per_month Int
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  user       users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  shift_type shift_types @relation(fields: [shift_type_id], references: [id], onDelete: Cascade)
+
+  @@unique([department_id, user_id, shift_type_id])
+  @@index([department_id, is_active])
+  @@index([user_id])
+  @@index([shift_type_id])
+}
+
+model packages {
+  id              Int          @id @default(autoincrement())
+  code            String       @db.VarChar(20)
+  name_th         String       @db.VarChar(100)
+  name_en         String       @db.VarChar(100)
+  description     String?      @db.Text
+  price           Decimal      @db.Decimal(10, 2)
+  credits         Int
+  validity_months Int
+  type            package_type
+  is_active       Boolean      @default(true)
+  created_at      DateTime     @default(now()) @db.DateTime(0)
+  updated_at      DateTime     @updatedAt @db.DateTime(0)
+
+  facility_packages     facility_packages[]
+  package_cv_limits     package_cv_limits[]
+  package_role_mappings package_role_mappings[]
+}
+
+model facility_packages {
+  id                       Int                     @id @default(autoincrement())
+  facility_id              Int
+  package_id               Int
+  credits_total            Int
+  credits_remaining        Int
+  status                   facility_package_status
+  payment_reference        String?                 @db.VarChar(100)
+  payment_slip_original    String?                 @db.VarChar(500)
+  payment_slip_watermarked String?                 @db.VarChar(500)
+  requested_by             Int?
+  requested_at             DateTime?               @db.DateTime(0)
+  approved_by              Int?
+  approved_at              DateTime?               @db.DateTime(0)
+  rejected_by              Int?
+  rejected_at              DateTime?               @db.DateTime(0)
+  rejection_reason         String?                 @db.Text
+  activated_at             DateTime?               @db.DateTime(0)
+  expires_at               DateTime?               @db.DateTime(0)
+  created_at               DateTime                @default(now()) @db.DateTime(0)
+  updated_at               DateTime                @updatedAt @db.DateTime(0)
+
+  package      packages       @relation(fields: [package_id], references: [id])
+  package_logs package_logs[]
+
+  @@index([package_id])
+}
+
+model package_logs {
+  id                  Int                @id @default(autoincrement())
+  facility_package_id Int
+  action_type         package_log_action
+  credits_amount      Int
+  credits_balance     Int
+  reference_id        Int?
+  action_by           Int?
+  created_at          DateTime           @default(now()) @db.DateTime(0)
+
+  facility_package facility_packages @relation(fields: [facility_package_id], references: [id])
+
+  @@index([facility_package_id])
+}
+
+model package_cv_limits {
+  id         Int @id @default(autoincrement())
+  package_id Int
+  role_id    Int
+  cv_limit   Int
+
+  package packages @relation(fields: [package_id], references: [id])
+
+  @@index([package_id])
+}
+
+model package_role_mappings {
+  id         Int @id @default(autoincrement())
+  package_id Int
+  role_id    Int
+
+  package packages @relation(fields: [package_id], references: [id])
+
+  @@index([package_id])
+}
+
+model facility_sizes {
+  id               Int            @id @default(autoincrement())
+  name_th          String         @db.VarChar(100)
+  name_en          String         @db.VarChar(100)
+  facility_type_id Int
+  facility_type    facility_types @relation(fields: [facility_type_id], references: [id])
+  facilities       facilities[]
+
+  @@index([facility_type_id])
+}
+
+enum AnnouncementPriority {
+  normal
+  important
+  urgent
+}
+
+enum AuspiciousColorType {
+  lucky
+  unlucky
+}
+
+enum BoothEventType {
+  online
+  onsite
+}
+
+enum CategoryScope {
+  doctor
+  nurse
+  both
+}
+
+enum CreditApprovalStatus {
+  approved
+  rejected
+}
+
+enum CreditRequestType {
+  topup
+  adjustment
+}
+
+enum CreditRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+enum DepartmentSupervisorRole {
+  head
+  assistant
+  secretary
+}
+
+enum VisibilityMode {
+  none
+  partial
+  full
+}
+
+enum Weekday {
+  mon
+  tue
+  wed
+  thu
+  fri
+  sat
+  sun
+}
+
+enum GiveShiftTargetApproveStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum GiveShiftStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  CANCELLED
+}
+
+enum JobPublishGroup {
+  hospital      @map("hospital")
+  part_time     @map("part-time")
+  system        @map("system")
+  former_worker @map("former-worker")
+}
+
+enum JobAutoCloseType {
+  time
+  first_applicant
+  max_applicants
+  manual
+}
+
+enum NotificationTargetChannel {
+  user
+  role
+  group
+  broadcast
+  topic
+}
+
+enum NotificationStatus {
+  pending
+  processing
+  sent
+  failed
+}
+
+enum UserDocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DeviceType {
+  ios
+  android
+  web
+  desktop
+  other
+}
+
+enum UserNotificationPushStatus {
+  pending
+  success
+  failed
+}
+
+model draft_schedule {
+  id            Int       @id @default(autoincrement())
+  department_id Int
+  facility_id   Int
+  date          DateTime  @db.Date
+  month         Int       @db.TinyInt
+  year          Int       @db.SmallInt
+  shift_type_id Int
+  employee_id   Int
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@index([department_id], map: "idx_draft_schedule_department")
+  @@index([facility_id], map: "idx_draft_schedule_facility")
+  @@index([department_id, month, year], map: "idx_draft_schedule_dept_month_year")
+}
+
+model facility_human_resources {
+  id          Int       @id @default(autoincrement())
+  facility_id Int
+  user_id     Int
+  assigned_at DateTime? @default(now()) @db.DateTime(0)
+  is_active   Boolean?  @default(true)
+  created_by  Int?
+  updated_by  Int?
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @db.DateTime(0)
+}
+
+model scheduling_rule_exception_configs {
+  id            Int      @id @default(autoincrement())
+  department_id Int
+  reason        String   @db.VarChar(50)
+  is_active     Boolean  @default(true)
+  created_by    Int?
+  updated_by    Int?
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  updated_at    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments                       @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  pairs      scheduling_rule_exception_pairs[]
+
+  @@index([department_id, is_active])
+}
+
+model scheduling_rule_exception_pairs {
+  id                  Int      @id @default(autoincrement())
+  exception_config_id Int
+  user_id             Int
+  date                DateTime @db.Date
+  is_active           Boolean  @default(true)
+  created_by          Int?
+  updated_by          Int?
+  created_at          DateTime @default(now()) @db.DateTime(0)
+  updated_at          DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  exception_config scheduling_rule_exception_configs @relation(fields: [exception_config_id], references: [id], onDelete: Cascade)
+  user             users                             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([exception_config_id])
+  @@index([user_id, date])
+}
+
+model scheduling_rule_consecutive_shift_limit_groups {
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  department_id        Int
+  shift_type_id        Int
+  max_consecutive_days Int
+  created_by           Int?
+  updated_by           Int?
+  created_at           DateTime @default(now()) @db.DateTime(0)
+  updated_at           DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  department departments                                @relation(fields: [department_id], references: [id], onDelete: Cascade)
+  shift_type shift_types                                @relation(fields: [shift_type_id], references: [id], onDelete: Cascade)
+  members    scheduling_rule_consecutive_shift_limits[]
+
+  @@index([department_id])
+}
+
+model scheduling_rule_consecutive_shift_limits {
+  id         Int      @id @default(autoincrement())
+  group_id   Int
+  user_id    Int
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  group scheduling_rule_consecutive_shift_limit_groups @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  user  users                                          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([group_id, user_id])
+  @@index([group_id])
+  @@index([user_id])
+}
+
+enum ContentType {
+  event
+  news
+}
+
+enum InteractionType {
+  like
+  dislike
+}
+
+enum SwapTargetApproveStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum checkIn_reward_redemptions_status {
+  pending
+  completed
+  expired
+}
+
+enum package_type {
+  FULLTIME
+  PARTTIME
+}
+
+enum facility_package_status {
+  PENDING
+  APPROVED
+  REJECTED
+  ACTIVATED
+  EXPIRED
+}
+
+enum package_log_action {
+  BUY
+  USE
+  REFUND
+  EXPIRE
+}
+
+model user_job_match_settings {
+  id                    Int       @id @default(autoincrement())
+  user_id               Int       @unique
+  auto_accept           Boolean   @default(false)
+  available_from_time   String?   @db.VarChar(5)
+  available_to_time     String?   @db.VarChar(5)
+  available_all_time    Boolean   @default(false)
+  is_monday             Boolean   @default(false)
+  is_tuesday            Boolean   @default(false)
+  is_wednesday          Boolean   @default(false)
+  is_thursday           Boolean   @default(false)
+  is_friday             Boolean   @default(false)
+  is_saturday           Boolean   @default(false)
+  is_sunday             Boolean   @default(false)
+  allow_profile_access  Boolean   @default(false)
+  allow_document_access Boolean   @default(false)
+  created_at            DateTime? @default(now()) @db.DateTime(0)
+  updated_at            DateTime? @default(now()) @updatedAt @db.DateTime(0)
+}
+
+enum diagnosis_log_status {
+  success
+  failed
+  timeout
+}
+
+enum wage_type {
+  per_hour
+  per_day
+}
+
+enum JobAutoMatchUserOfferStatus {
+  pending  @map("pending")
+  applied  @map("applied")
+  rejected @map("rejected")
+
+  @@map("job_auto_match_user_offer_status")
+}
+
+model job_auto_match_user_offers {
+  id         BigInt                      @id @default(autoincrement())
+  user_id    Int                         @db.Int
+  job_id     Int                         @db.Int
+  status     JobAutoMatchUserOfferStatus @default(pending)
+  expire_at  DateTime                    @db.DateTime(0)
+  created_at DateTime?                   @default(now()) @db.DateTime(0)
+  updated_at DateTime?                   @default(now()) @updatedAt @db.DateTime(0)
+
+  users users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  jobs  jobs  @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, job_id], map: "uq_offer_user_job")
+  @@index([user_id], map: "idx_offer_user_id")
+  @@index([job_id], map: "idx_offer_job_id")
+}
+
+enum email_log_status {
+  pending
+  success
+  failed
+}
+
+model email_logs {
+  id            BigInt           @id @default(autoincrement())
+  event_name    String           @db.VarChar(100)
+  to_addresses  Json
+  subject       String           @db.VarChar(500)
+  body          String           @db.Text
+  status        email_log_status @default(pending)
+  error_message String?          @db.Text
+  sent_at       DateTime?        @db.DateTime(0)
+  created_at    DateTime         @default(now()) @db.DateTime(0)
+  updated_at    DateTime         @default(now()) @updatedAt @db.DateTime(0)
+
+  @@index([status])
+  @@index([created_at])
+}
+
+enum UserProduct {
+  mediwork
+  medimatch
+}
+
+model user_product_access {
+  id          Int         @id @default(autoincrement())
+  user_id     Int
+  product     UserProduct
+  facility_id Int
+  created_at  DateTime    @default(now()) @db.DateTime(0)
+
+  user     users      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_upa_user")
+  facility facilities @relation(fields: [facility_id], references: [id], map: "fk_upa_facility")
+
+  @@unique([user_id, product], map: "uq_user_product")
+  @@index([user_id], map: "idx_upa_user_id")
+  @@index([facility_id], map: "idx_upa_facility_id")
+}
+
+model diagnosis_logs {
+  id            Int                  @id @default(autoincrement())
+  facility_id   Int
+  department_id Int
+  user_id       Int
+  month         Int                  @db.TinyInt
+  year          Int                  @db.SmallInt
+  status        diagnosis_log_status
+  llm_model     String               @db.VarChar(50)
+  input_tokens  Int?
+  output_tokens Int?
+  latency_ms    Int?
+  created_at    DateTime             @default(now())
+
+  facility   facilities  @relation(fields: [facility_id], references: [id], onDelete: Cascade, map: "diagnosis_logs_ibfk_1")
+  department departments @relation(fields: [department_id], references: [id], onDelete: Cascade, map: "diagnosis_logs_ibfk_2")
+  user       users       @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "diagnosis_logs_ibfk_3")
+
+  @@index([facility_id, created_at], map: "idx_diagnosis_rate_limit")
+  @@index([department_id, month, year], map: "idx_diagnosis_dept_month")
+}
+
+model auto_schedule_no_solution_logs {
+  id            Int      @id @default(autoincrement())
+  facility_id   Int
+  department_id Int
+  user_id       Int
+  month         Int      @db.TinyInt
+  year          Int      @db.SmallInt
+  context       Json
+  created_at    DateTime @default(now())
+
+  facility   facilities  @relation(fields: [facility_id], references: [id], onDelete: Cascade, map: "auto_schedule_no_solution_logs_ibfk_1")
+  department departments @relation(fields: [department_id], references: [id], onDelete: Cascade, map: "auto_schedule_no_solution_logs_ibfk_2")
+  user       users       @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "auto_schedule_no_solution_logs_ibfk_3")
+
+  @@index([department_id, month, year], map: "idx_no_solution_dept_month")
+}
+
+enum medimatch_activity_log_action_type {
+  EDITED_JOB
+  DOWNLOADED_CV
+  VIEWED_CV
+}
+
+model medimatch_activity_logs {
+  id            Int                                @id @default(autoincrement())
+  facility_id   Int
+  job_id        Int
+  job_code      String                             @db.VarChar(50)
+  department_id Int
+  performed_by  Int
+  action_type   medimatch_activity_log_action_type
+  description   String                             @db.VarChar(500)
+  quota_used    Int                                @default(0)
+  metadata      Json?
+  is_active     Boolean                            @default(true)
+  created_at    DateTime                           @default(now()) @db.DateTime(0)
+
+  @@index([facility_id, created_at], map: "idx_mal_facility_created")
+  @@index([action_type], map: "idx_mal_action_type")
+  @@index([job_id], map: "idx_mal_job_id")
+}
